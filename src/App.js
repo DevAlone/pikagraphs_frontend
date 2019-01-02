@@ -16,6 +16,9 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import {BrowserRouter, Link, Route} from "react-router-dom";
 import Home from "./Home";
 import Users from "./Users";
+import User from "./User";
+import {Provider as AlertProvider} from 'react-alert'
+import AlertTemplate from 'react-alert-template-basic'
 
 const drawerWidth = 240;
 
@@ -96,6 +99,13 @@ const styles = theme => ({
     },
 });
 
+const alertOptions = {
+    position: "bottom right",
+    timeout: 2500,
+    offset: '30px',
+    transition: 'scale',
+};
+
 const mainMenuItems = (
     <div>
         <ListItem button component={Link} to={"/"}>
@@ -139,33 +149,36 @@ class App extends React.Component {
         const {classes} = this.props;
 
         return (
-            <BrowserRouter>
-                <div className={classes.root}>
-                    <CssBaseline/>
+            <AlertProvider template={AlertTemplate} {...alertOptions}>
+                <BrowserRouter>
+                    <div className={classes.root}>
+                        <CssBaseline/>
 
-                    {/* sidebar */}
-                    <Drawer
-                        variant="permanent"
-                        classes={{
-                            paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-                        }}
-                        open={this.state.open}
-                    >
-                        <div className={classes.toolbarIcon}>
-                            <IconButton onClick={this.handleDrawerClose}>
-                                <ChevronLeftIcon/>
-                            </IconButton>
-                        </div>
-                        <Divider/>
-                        <List>{mainMenuItems}</List>
-                        <Divider/>
-                    </Drawer>
-                    <main className={classes.content}>
-                        <Route exact path={"/"} component={Home}/>
-                        <Route path={"/users"} component={Users}/>
-                    </main>
-                </div>
-            </BrowserRouter>
+                        {/* sidebar */}
+                        <Drawer
+                            variant="permanent"
+                            classes={{
+                                paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+                            }}
+                            open={this.state.open}
+                        >
+                            <div className={classes.toolbarIcon}>
+                                <IconButton onClick={this.handleDrawerClose}>
+                                    <ChevronLeftIcon/>
+                                </IconButton>
+                            </div>
+                            <Divider/>
+                            <List>{mainMenuItems}</List>
+                            <Divider/>
+                        </Drawer>
+                        <main className={classes.content}>
+                            <Route exact path={"/"} component={Home}/>
+                            <Route path={"/users"} component={Users}/>
+                            <Route path={"/user/:username"} component={User}/>
+                        </main>
+                    </div>
+                </BrowserRouter>
+            </AlertProvider>
         );
     }
 }
