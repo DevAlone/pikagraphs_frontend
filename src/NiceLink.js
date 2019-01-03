@@ -16,7 +16,8 @@ class NiceListItem extends Component {
                 className="NiceLink"
                 rel="nofollow noopener noreferrer"
                 target={this.sameHost ? null : "_blank"}
-                {...this.props}>
+                {...this.props}
+            >
                 {this.props.children}
             </a>
         );

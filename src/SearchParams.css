@@ -1,3 +1,22 @@
 .Chip {
     margin: 2px 3px;
 }
+
+.orderingButtongs > * {
+    display: inline-block;
+}
+
+.root > * {
+    margin-bottom: 10px;
+}
+
+/*.root > * {*/
+.block {
+    padding: 10px 20px !important;
+    /*padding: 0 !important;*/
+}
+
+.searchField {
+    width: 100%;
+}
+

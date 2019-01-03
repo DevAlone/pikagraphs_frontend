@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
 import ListItem from "@material-ui/core/ListItem";
 import {withStyles} from "@material-ui/core/styles";
+import {Link} from "react-router-dom";
 
 const styles = theme => ({
-    root: {},
+    root: {
+        textDecoration: "none",
+    },
 });
 
 function ListItemLink(props) {
@@ -16,9 +19,11 @@ class NiceListItem extends Component {
         const {classes} = this.props;
 
         return (
-            <ListItemLink href={this.props.href} className={classes.root}>
-                {this.props.children}
-            </ListItemLink>
+            <Link to={this.props.href} className={classes.root}>
+                <ListItemLink>
+                    {this.props.children}
+                </ListItemLink>
+            </Link>
         );
     }
 }

@@ -34,3 +34,7 @@
 .sidebar {
 }
 
+#appContent {
+    overflow-y: auto;
+}
+

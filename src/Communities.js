@@ -6,6 +6,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Row from "./Row";
+import NiceLink from "./NiceLink";
 import SearchParams from "./SearchParams";
 import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -15,7 +16,7 @@ const styles = theme => ({
     },
 });
 
-class Users extends Component {
+class Communities extends Component {
     constructor(props) {
         super(props);
 
@@ -23,10 +24,10 @@ class Users extends Component {
 
 
         this.state = {
-            users: [],
+            items: [],
             hasMoreItems: true,
             searchParamsState: {
-                orderByField: "rating",
+                orderByField: "-number_of_subscribers",
             },
         };
         this.offset = 0;
@@ -34,9 +35,9 @@ class Users extends Component {
         this.fetchMore();
     }
 
-    fetchMore(page) {
+    fetchMore = () => {
         DoRequest('get_model', {
-            name: 'pikabu_user',
+            name: 'pikabu_community',
             limit: this.limit,
             offset: this.offset,
             order_by_fields: this.state.searchParamsState != null ?
@@ -46,10 +47,10 @@ class Users extends Component {
         }).then(response => {
             this.offset += this.limit;
             response = response.data;
-            if (response.results != null) {
+            if (response.results != null && response.results.length > 0) {
                 this.setState(prevState => {
                     return {
-                        users: prevState.users.concat(response.results),
+                        items: prevState.items.concat(response.results),
                     };
                 });
             } else {
@@ -58,13 +59,13 @@ class Users extends Component {
                 });
             }
         });
-    }
+    };
 
     searchParamsStateChanged(state) {
         this.setState(prevState => {
             this.offset = 0;
             return {
-                users: [],
+                items: [],
                 hasMoreItems: true,
                 searchParamsState: state,
             };
@@ -76,42 +77,31 @@ class Users extends Component {
         const {classes} = this.props;
         const searchParams = <SearchParams
             orderByFields={{
-                "pikabu_id": ["ID на Пикабу", "ID на Пикабу"],
-                "username": ["Никнейму", null],
-                "gender": ["Полу", "Пол"],
-                "rating": ["Рейтингу", "Рейтинг"],
-                "number_of_comments": ["Количеству комментариев", "Комментариев"],
                 "number_of_subscribers": ["Количеству подписчиков", "Подписчиков"],
                 "number_of_stories": ["Количеству постов", "Постов"],
-                "number_of_hot_stories": ["Количеству горячих постов", "Горячих постов"],
-                "number_of_pluses": ["Количеству плюсов", "Плюсов"],
-                "number_of_minuses": ["Количеству минусов", "Минусов"],
-                "signup_timestamp": ["Дате регистрации", "Дата регистрации"],
-                "avatar_url": ["аватар урл", ""],
-                "approved_text": ["Подтверждён", ""],
-                "award_ids": ["awardsid", ""],
-                "community_ids": ["community id", ""],
-                "ban_history_item_ids": ["ban history items", ""],
-                "ban_end_timestamp": ["Дате окончания бана", "Дата окончания бана"],
-                "is_rating_hidden": ["Рейтинг скрыт", ""],
-                "is_banned": ["Забанен", ""],
-                "is_permanently_banned": ["Полностью забанен", ""],
+                "pikabu_id": ["ID на Пикабу", "ID на Пикабу"],
+                "name": ["Название", null],
                 "added_timestamp": ["Дате добавления в pikagraphs", "Дата добавления в pikagraphs"],
                 "last_update_timestamp": ["Последнему времени обновления", "Последнее время обновления"],
-                "next_update_timestamp": ["Следующему времени обновления", "Следующее время обновления"],
             }}
             filterByFields={{
                 "pikabu_id": ["ID на Пикабу", [">", "<", ">=", "<=", "==", "!="]],
-                "username": ["Никнейм", ["=="]],
             }}
             onStateChanged={this.searchParamsStateChanged.bind(this)}
         />;
+
+        // scrollableTarget={"id"}
+
+        // pageStart={0}
+        // loadMore={this.fetchMore}
+        // hasMore={this.state.hasMoreItems}
+        // loader={<h1>Loading...</h1>}
 
         return (
             <div>
                 {searchParams}
                 <InfiniteScroll
-                    dataLength={this.state.users.length}
+                    dataLength={this.state.items.length}
                     next={this.fetchMore}
                     hasMore={this.state.hasMoreItems}
                     loader={<h1>Загрузка...</h1>}
@@ -123,16 +113,16 @@ class Users extends Component {
                     scrollableTarget={"appContent"}
                 >
                     <List>
-                        {this.state.users.map((value, index) => {
+                        {this.state.items.map((value, index) => {
                             return (
                                 <BeautifulListItem
-                                    key={index}
-                                    href={"/user/" + value.username}
+                                    key={value.link_name}
+                                    href={"/community/" + value.link_name}
                                 >
                                     <ListItemAvatar className={classes.avatar}>
                                         <img src={value.avatar_url} alt={"avatar"}/>
                                     </ListItemAvatar>
-                                    <ListItemText primary={value.username}/>
+                                    <ListItemText primary={value.name}/>
                                     <Row>
                                         {this.state.searchParamsState.orderByFieldText[1] != null ?
                                             <Row>
@@ -141,10 +131,10 @@ class Users extends Component {
                                             </Row>
                                             : <span></span>
                                         }
-                                        {/*<NiceLink href={"https://pikabu.ru/@" + value.username} target="_blank"*/}
-                                        {/*title={"Показать на Пикабу"}>*/}
-                                        {/*<img src={"https://s.pikabu.ru/favicon.ico"} alt={"Показать на Пикабу"}/>*/}
-                                        {/*</NiceLink>*/}
+                                        <NiceLink href={value.url}
+                                                  title={"Показать на Пикабу"}>
+                                            <img src={"https://s.pikabu.ru/favicon.ico"} alt={"Открыть на Пикабу"}/>
+                                        </NiceLink>
                                     </Row>
                                 </BeautifulListItem>
                             );
@@ -156,4 +146,4 @@ class Users extends Component {
     }
 }
 
-export default withStyles(styles)(Users);
+export default withStyles(styles)(Communities);

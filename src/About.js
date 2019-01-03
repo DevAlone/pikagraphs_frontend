@@ -3,10 +3,6 @@ import Block from "./Block";
 import NiceLink from "./NiceLink";
 
 class About extends Component {
-    constructor(params) {
-        super(params);
-    }
-
     render() {
         return (
             <div>

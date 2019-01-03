@@ -26,6 +26,8 @@ import Favicon from './assets/img/favicon.ico';
 import Icon from "@material-ui/core/Icon";
 import About from "./About";
 import Donate from "./Donate";
+import Communities from "./Communities";
+import Community from "./Community";
 
 const drawerWidth = 240;
 
@@ -138,7 +140,7 @@ class App extends React.Component {
                 <ListItem button component={Link} to={"/"}>
                     <ListItemIcon>
                         <Icon>
-                            <img className={classes.sidebarIcon} src={Favicon}/>
+                            <img className={classes.sidebarIcon} src={Favicon} alt={""}/>
                         </Icon>
                     </ListItemIcon>
                     <ListItemText primary="Главная"/>
@@ -206,10 +208,12 @@ class App extends React.Component {
                             <List>{mainMenuItems}</List>
                             <Divider/>
                         </Drawer>
-                        <main className={classes.content}>
+                        <main id="appContent" className={classes.content}>
                             <Route exact path={"/"} component={Home}/>
                             <Route path={"/users"} component={Users}/>
                             <Route path={"/user/:username"} component={User}/>
+                            <Route path={"/communities"} component={Communities}/>
+                            <Route path={"/community/:link_name"} component={Community}/>
                             <Route path={"/about"} component={About}/>
                             <Route path={"/donate"} component={Donate}/>
                         </main>

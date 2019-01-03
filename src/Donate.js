@@ -4,10 +4,6 @@ import NiceLink from "./NiceLink";
 import './Donate.css';
 
 class Donate extends Component {
-    constructor(params) {
-        super(params);
-    }
-
     render() {
         const donateQIWIWidget = `
                 <iframe
