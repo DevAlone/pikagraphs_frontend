@@ -8,6 +8,7 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import ListItem from "@material-ui/core/ListItem";
@@ -19,12 +20,19 @@ import Users from "./Users";
 import User from "./User";
 import {Provider as AlertProvider} from 'react-alert'
 import AlertTemplate from 'react-alert-template-basic'
+import Background from './assets/img/white_pattern.png';
+import SidebarBackground from './assets/img/blue_pattern.gif';
+import Favicon from './assets/img/favicon.ico';
+import Icon from "@material-ui/core/Icon";
+import About from "./About";
+import Donate from "./Donate";
 
 const drawerWidth = 240;
 
 const styles = theme => ({
     root: {
         display: 'flex',
+        backgroundImage: `url(${Background})`,
     },
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
@@ -69,6 +77,7 @@ const styles = theme => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
         }),
+        backgroundImage: `url(${SidebarBackground})`,
     },
     drawerPaperClose: {
         overflowX: 'hidden',
@@ -97,6 +106,9 @@ const styles = theme => ({
     h5: {
         marginBottom: theme.spacing.unit * 2,
     },
+    sidebarIcon: {
+        height: "25px",
+    },
 });
 
 const alertOptions = {
@@ -106,47 +118,65 @@ const alertOptions = {
     transition: 'scale',
 };
 
-const mainMenuItems = (
-    <div>
-        <ListItem button component={Link} to={"/"}>
-            <ListItemIcon>
-                <PeopleIcon/>
-            </ListItemIcon>
-            <ListItemText primary="Главная"/>
-        </ListItem>
-
-        <ListItem button component={Link} to={"/users"}>
-            <ListItemIcon>
-                <PeopleIcon/>
-            </ListItemIcon>
-            <ListItemText primary="Пользователи"/>
-        </ListItem>
-
-        <ListItem button component={Link} to={"/communities"}>
-            <ListItemIcon>
-                <BarChartIcon/>
-            </ListItemIcon>
-            <ListItemText primary="Сообщества"/>
-        </ListItem>
-
-    </div>
-);
 
 class App extends React.Component {
     state = {
         open: true,
     };
 
-    handleDrawerOpen = () => {
-        this.setState({open: true});
-    };
-
-    handleDrawerClose = () => {
-        this.setState({open: false});
+    handleDrawerSwitch = () => {
+        this.setState(prevState => {
+            return {open: !prevState.open};
+        });
     };
 
     render() {
         const {classes} = this.props;
+
+        const mainMenuItems = (
+            <div>
+                <ListItem button component={Link} to={"/"}>
+                    <ListItemIcon>
+                        <Icon>
+                            <img className={classes.sidebarIcon} src={Favicon}/>
+                        </Icon>
+                    </ListItemIcon>
+                    <ListItemText primary="Главная"/>
+                </ListItem>
+
+                <ListItem button component={Link} to={"/users"}>
+                    <ListItemIcon>
+                        <PeopleIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Пользователи"/>
+                </ListItem>
+
+                <ListItem button component={Link} to={"/communities"}>
+                    <ListItemIcon>
+                        <BarChartIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Сообщества"/>
+                </ListItem>
+
+                <ListItem button component={Link} to={"/about"}>
+                    <ListItemIcon>
+                        <Icon>
+                            contact_support
+                        </Icon>
+                    </ListItemIcon>
+                    <ListItemText primary="О проекте"/>
+                </ListItem>
+
+                <ListItem button component={Link} to={"/donate"}>
+                    <ListItemIcon>
+                        <Icon>
+                            euro_symbol
+                        </Icon>
+                    </ListItemIcon>
+                    <ListItemText primary="Поддержать проект"/>
+                </ListItem>
+            </div>
+        );
 
         return (
             <AlertProvider template={AlertTemplate} {...alertOptions}>
@@ -157,14 +187,19 @@ class App extends React.Component {
                         {/* sidebar */}
                         <Drawer
                             variant="permanent"
+                            className={"sidebar"}
                             classes={{
                                 paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
                             }}
                             open={this.state.open}
                         >
                             <div className={classes.toolbarIcon}>
-                                <IconButton onClick={this.handleDrawerClose}>
-                                    <ChevronLeftIcon/>
+                                <IconButton onClick={this.handleDrawerSwitch}>
+                                    {
+                                        this.state.open ?
+                                            <ChevronLeftIcon/>
+                                            : <ChevronRightIcon/>
+                                    }
                                 </IconButton>
                             </div>
                             <Divider/>
@@ -175,6 +210,8 @@ class App extends React.Component {
                             <Route exact path={"/"} component={Home}/>
                             <Route path={"/users"} component={Users}/>
                             <Route path={"/user/:username"} component={User}/>
+                            <Route path={"/about"} component={About}/>
+                            <Route path={"/donate"} component={Donate}/>
                         </main>
                     </div>
                 </BrowserRouter>

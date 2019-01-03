@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Block from "./Block";
+import NiceLink from "./NiceLink";
 
 class Home extends Component {
     constructor(params) {
@@ -15,8 +16,8 @@ class Home extends Component {
             <div>
                 <h1>Pikagraphs - статистика Пикабу</h1>
                 <Block>
-                    Pikagrahps - проект по сбору статистики с сайта
-                    <app-nice-link href="https://pikabu.ru">Пикабу</app-nice-link>,
+                    Pikagrahps - проект по сбору статистики сайта<span> </span>
+                    <NiceLink href="https://pikabu.ru">Пикабу</NiceLink>,
                     запущенный 19 августа 2017 года.
                     За время существования был несколько раз переписан на различных технологиях для достижения большей
                     производительности.

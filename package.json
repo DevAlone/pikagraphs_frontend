@@ -15,7 +15,8 @@
     "react-infinite-scroller": "^1.2.4",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.2",
-    "typeface-roboto": "0.0.54"
+    "typeface-roboto": "0.0.54",
+    "url-parse": "^1.4.4"
   },
   "scripts": {
     "start": "react-scripts start",
