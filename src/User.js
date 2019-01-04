@@ -9,6 +9,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/es/ExpansionPanelDetails/ExpansionPanelDetails";
 import Typography from "@material-ui/core/es/Typography/Typography";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Block from "./Block";
 
 const styles = theme => ({
     userDataTableSummary: {
@@ -21,15 +22,22 @@ class User extends Component {
     constructor(props) {
         super(props);
         this.state = {}
-        this.username = this.props.match.params.username;
+        this.id = this.props.match.params.id;
         this.updateUser();
     }
 
     updateUser() {
+        var filterRequest = '';
+        if (this.id.match(/^[0-9]+$/g)) {
+            filterRequest = 'pikabu_id == ' + this.id + 'u';
+        } else {
+            filterRequest = 'ilike(username, "' + this.id + '")';
+        }
+
         DoRequest('get_model', {
             name: 'pikabu_user',
             limit: 1,
-            filter: 'ilike(username, "' + this.username + '")',
+            filter: filterRequest,
         }).then(response => {
             this.setState({
                 user: response.data.results[0],
@@ -53,7 +61,6 @@ class User extends Component {
             ["Количество горячих постов", this.state.user.number_of_hot_stories],
             ["Количество плюсов", this.state.user.number_of_pluses],
             ["Количество минусов", this.state.user.number_of_minuses],
-            ["ID на Пикабу", this.state.user.pikabu_id],
             ["Никнейм", this.state.user.username],
             ["Пол", this.state.user.gender],
             ["Дата регистрации", this.state.user.signup_timestamp],
@@ -83,7 +90,7 @@ class User extends Component {
                 <div className={"userDataTable"}>
                     {tableRows.map(row => {
                         return (
-                            <ExpansionPanel>
+                            <ExpansionPanel key={row[0]}>
                                 <ExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon/>}
                                     className={classes.userDataTableSummary}
@@ -104,6 +111,13 @@ class User extends Component {
                             </ExpansionPanel>
                         );
                     })}
+                    <Block>
+                        <div className={"userDataTableRow"}>
+                            <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
+                            <span
+                                className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
+                        </div>
+                    </Block>
                 </div>
             </div>
         );

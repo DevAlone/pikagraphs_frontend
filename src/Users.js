@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import DoRequest from './api';
 import List from "@material-ui/core/List";
 import BeautifulListItem from "./NiceListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Row from "./Row";
 import SearchParams from "./SearchParams";
 import InfiniteScroll from "react-infinite-scroll-component";
+import NiceLink from "./NiceLink";
 
 const styles = theme => ({
     avatar: {
@@ -31,7 +31,7 @@ class Users extends Component {
         };
         this.offset = 0;
         this.limit = 64;
-        this.fetchMore();
+        // this.fetchMore();
     }
 
     fetchMore(page) {
@@ -125,28 +125,33 @@ class Users extends Component {
                     <List>
                         {this.state.users.map((value, index) => {
                             return (
-                                <BeautifulListItem
-                                    key={index}
-                                    href={"/user/" + value.username}
-                                >
-                                    <ListItemAvatar className={classes.avatar}>
-                                        <img src={value.avatar_url} alt={"avatar"}/>
-                                    </ListItemAvatar>
-                                    <ListItemText primary={value.username}/>
-                                    <Row>
-                                        {this.state.searchParamsState.orderByFieldText[1] != null ?
-                                            <Row>
-                                                <ListItemText>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
-                                                <ListItemText>{value[this.state.searchParamsState.orderByField]}</ListItemText>
-                                            </Row>
-                                            : <span></span>
-                                        }
-                                        {/*<NiceLink href={"https://pikabu.ru/@" + value.username} target="_blank"*/}
-                                        {/*title={"Показать на Пикабу"}>*/}
-                                        {/*<img src={"https://s.pikabu.ru/favicon.ico"} alt={"Показать на Пикабу"}/>*/}
-                                        {/*</NiceLink>*/}
-                                    </Row>
-                                </BeautifulListItem>
+                                <Row>
+                                    <div className="userLink">
+                                        <BeautifulListItem
+                                            key={index}
+                                            href={"/user/" + value.username}
+                                        >
+                                            <img className={classes.avatar} src={value.avatar_url} alt={"avatar"}/>
+                                            <ListItemText primary={value.username}/>
+                                            {this.state.searchParamsState.orderByFieldText[1] != null ?
+                                                <Row>
+                                                    <ListItemText>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
+                                                    <ListItemText>{value[this.state.searchParamsState.orderByField]}</ListItemText>
+                                                </Row>
+                                                : null
+                                            }
+                                        </BeautifulListItem>
+                                    </div>
+                                    <NiceLink
+                                        href={"https://pikabu.ru/@" + value.username}
+                                        target="_blank"
+                                        title={"Показать на Пикабу"}>
+                                        <img
+                                            className="showOnPikabuImg"
+                                            src={"https://s.pikabu.ru/favicon.ico"}
+                                            alt={"Показать на Пикабу"}/>
+                                    </NiceLink>
+                                </Row>
                             );
                         })}
                     </List>

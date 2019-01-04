@@ -9,84 +9,72 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/es/ExpansionPanelDetails/ExpansionPanelDetails";
 import Typography from "@material-ui/core/es/Typography/Typography";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Block from "./Block";
 
-const styles = theme => ({
-    userDataTableSummary: {
-        // padding: "0px",
-        // height: "40px",
-    },
-});
+const styles = theme => ({});
 
 class Community extends Component {
     constructor(props) {
         super(props);
         this.state = {}
-        this.username = this.props.match.params.username;
-        this.updateUser();
+        this.id = this.props.match.params.id;
+        this.updateData();
     }
 
-    updateUser() {
+    updateData = () => {
         DoRequest('get_model', {
-            name: 'pikabu_user',
+            name: 'pikabu_community',
             limit: 1,
-            filter: 'ilike(username, "' + this.username + '")',
+            filter: 'ilike(link_name, "' + this.id + '")',
         }).then(response => {
             this.setState({
-                user: response.data.results[0],
+                data: response.data.results[0],
             });
-        })
-    }
+        });
+    };
 
     render() {
         const {classes} = this.props;
-        if (typeof (this.state.user) === "undefined" || this.state.user === null) {
+        if (typeof (this.state.data) === "undefined" || this.state.data === null) {
             return (
                 <div className="Loading">Загрузка...</div>
             );
         }
 
         const tableRows = [
-            ["Рейтинг", this.state.user.rating],
-            ["Количество подписчиков", this.state.user.number_of_subscribers],
-            ["Количество комментариев", this.state.user.number_of_comments],
-            ["Количество постов", this.state.user.number_of_stories],
-            ["Количество горячих постов", this.state.user.number_of_hot_stories],
-            ["Количество плюсов", this.state.user.number_of_pluses],
-            ["Количество минусов", this.state.user.number_of_minuses],
-            ["ID на Пикабу", this.state.user.pikabu_id],
-            ["Никнейм", this.state.user.username],
-            ["Пол", this.state.user.gender],
-            ["Дата регистрации", this.state.user.signup_timestamp],
-            ["Аватар", this.state.user.avatar_url],
-            ["Подтверждён", this.state.user.approved_text],
-            ["Награды", this.state.user.award_ids],
-            ["Сообщества", this.state.user.community_ids],
-            ["Баны", this.state.user.ban_history_item_ids],
-            ["Дата окончания бана", this.state.user.ban_end_timestamp],
-            ["Рейтинг скрыт", this.state.user.is_rating_hidden],
-            ["Забанен", this.state.user.is_banned],
-            ["Постоянно забанен", this.state.user.is_permanently_banned],
-            ["Добавлен в pikagraphs", this.state.user.added_timestamp],
-            ["Дата последнего обновления", this.state.user.last_update_timestamp],
-            ["Дата следующего обновления", this.state.user.next_update_timestamp],
+            ["Название", this.state.data.name],
+            ["Ссылка", this.state.data.link_name],
+            ["Адрес", this.state.data.url],
+            ["Аватар", this.state.data.avatar_url],
+            ["Фоновое изображение", this.state.data.background_image_url],
+            ["Теги", this.state.data.tags],
+            ["Количество постов", this.state.data.number_of_stories],
+            ["Количество подписчиков", this.state.data.number_of_subscribers],
+            ["Описание", this.state.data.description],
+            ["Правила", this.state.data.rules],
+            ["Ограничения", this.state.data.restrictions],
+            ["ID админа", this.state.data.admin_id],
+            ["ID модераторов", this.state.data.moderator_ids],
+            ["Добавлен в pikagraphs", this.state.data.added_timestamp],
+            ["Дата последнего обновления", this.state.data.last_update_timestamp],
         ];
 
         return (
             <div>
                 <Row>
-                    <img className={"avatar"} src={this.state.user.avatar_url} alt={"Аватар"}/>
-                    <NiceLink className={"usernameLink"} href={"https://pikabu.ru/@" + this.state.user.username}>
-                        {this.state.user.username}
+                    <img className={"avatar"} src={this.state.data.avatar_url} alt={"Аватар"}/>
+                    <NiceLink className={"communityLink"}
+                              href={"https://pikabu.ru/community/" + this.state.data.link_name}>
+                        {this.state.data.link_name}
                     </NiceLink>
-                    <span></span>
+                    <span/>
                 </Row>
-                <div className={"userDataTable"}>
+                <div className={"communityDataTable"}>
                     {tableRows.map(row => {
                         return (
-                            <ExpansionPanel>
+                            <ExpansionPanel key={row[0]}>
                                 <ExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon/>}
-                                    className={classes.userDataTableSummary}
                                     title={"Тыкни, чтоб показать историю"}
                                 >
                                     <div key={row[0]} className={"userDataTableRow"}>
@@ -104,6 +92,13 @@ class Community extends Component {
                             </ExpansionPanel>
                         );
                     })}
+                    <Block>
+                        <div className={"userDataTableRow"}>
+                            <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
+                            <span
+                                className={"userDataTableCell userDataTableCellRight"}>{this.state.data.pikabu_id}</span>
+                        </div>
+                    </Block>
                 </div>
             </div>
         );

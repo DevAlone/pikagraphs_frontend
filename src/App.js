@@ -211,9 +211,9 @@ class App extends React.Component {
                         <main id="appContent" className={classes.content}>
                             <Route exact path={"/"} component={Home}/>
                             <Route path={"/users"} component={Users}/>
-                            <Route path={"/user/:username"} component={User}/>
+                            <Route path={"/user/:id"} component={User}/>
                             <Route path={"/communities"} component={Communities}/>
-                            <Route path={"/community/:link_name"} component={Community}/>
+                            <Route path={"/community/:id"} component={Community}/>
                             <Route path={"/about"} component={About}/>
                             <Route path={"/donate"} component={Donate}/>
                         </main>

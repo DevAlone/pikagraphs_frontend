@@ -10,7 +10,7 @@ const styles = theme => ({
 });
 
 function ListItemLink(props) {
-    return <ListItem button component="a" {...props} />;
+    return <ListItem button {...props} />;
 }
 
 class NiceListItem extends Component {
