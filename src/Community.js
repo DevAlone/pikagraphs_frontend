@@ -10,6 +10,8 @@ import ExpansionPanelDetails from "@material-ui/core/es/ExpansionPanelDetails/Ex
 import Typography from "@material-ui/core/es/Typography/Typography";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Block from "./Block";
+import './Community.css';
+import Paper from "@material-ui/core/Paper";
 
 const styles = theme => ({});
 
@@ -22,7 +24,7 @@ class Community extends Component {
     }
 
     updateData = () => {
-        DoRequest('get_model', {
+        DoRequest('list_model', {
             name: 'pikabu_community',
             limit: 1,
             filter: 'ilike(link_name, "' + this.id + '")',
@@ -61,14 +63,19 @@ class Community extends Component {
 
         return (
             <div>
-                <Row>
-                    <img className={"avatar"} src={this.state.data.avatar_url} alt={"Аватар"}/>
-                    <NiceLink className={"communityLink"}
-                              href={"https://pikabu.ru/community/" + this.state.data.link_name}>
-                        {this.state.data.link_name}
-                    </NiceLink>
-                    <span/>
-                </Row>
+                <Paper className={"header"}>
+                    <img className={"backgroundImage"} src={this.state.data.background_image_url}
+                         alt={"Фоновое изображение"}/>
+                    <Row>
+                        <img className={"avatar"} src={this.state.data.avatar_url} alt={"Аватар"}/>
+                        <NiceLink className={"communityLink"}
+                                  href={"https://pikabu.ru/community/" + this.state.data.link_name}>
+                            {this.state.data.link_name}
+                        </NiceLink>
+                        <span/>
+                    </Row>
+                </Paper>
+
                 <div className={"communityDataTable"}>
                     {tableRows.map(row => {
                         return (

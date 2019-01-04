@@ -35,7 +35,7 @@ class Users extends Component {
     }
 
     fetchMore(page) {
-        DoRequest('get_model', {
+        DoRequest('list_model', {
             name: 'pikabu_user',
             limit: this.limit,
             offset: this.offset,
@@ -125,10 +125,11 @@ class Users extends Component {
                     <List>
                         {this.state.users.map((value, index) => {
                             return (
-                                <Row>
+                                <Row
+                                    key={index}
+                                >
                                     <div className="userLink">
                                         <BeautifulListItem
-                                            key={index}
                                             href={"/user/" + value.username}
                                         >
                                             <img className={classes.avatar} src={value.avatar_url} alt={"avatar"}/>

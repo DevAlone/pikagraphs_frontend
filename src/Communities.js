@@ -36,7 +36,7 @@ class Communities extends Component {
     }
 
     fetchMore = () => {
-        DoRequest('get_model', {
+        DoRequest('list_model', {
             name: 'pikabu_community',
             limit: this.limit,
             offset: this.offset,

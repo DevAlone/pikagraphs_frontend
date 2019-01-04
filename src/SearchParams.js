@@ -40,13 +40,14 @@ class SearchParams extends Component {
     }
 
     createFilter = (fieldName, operator, value) => {
-        this.setState(prevState => {
+        alert("coming soon...");
+        /*this.setState(prevState => {
             var fields = prevState.filterFields;
             fields.push([fieldName, operator, value]);
             return {
                 filterFields: fields,
             }
-        });
+        });*/
     };
 
     handleChangeFilter = (index, fieldName, operator, value) => {
