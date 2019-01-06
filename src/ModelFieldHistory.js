@@ -11,6 +11,7 @@ am4core.useTheme(am4themes_animated);
 
 const styles = theme => ({});
 
+// TODO: fix chart, see l4rever rating
 class ChartComponent extends Component {
     constructor(props) {
         super(props);
@@ -21,14 +22,15 @@ class ChartComponent extends Component {
         this.id = "amchart_" + this.modelName + "_" + this.fieldName;
     }
 
-    componentDidMount() {
-
+    loadData = (offset, limit, dataAccumulator, callback) => {
         const modelName = this.modelName + "_" + this.fieldName + "_versions";
 
         DoRequest("list_model", {
             "name": modelName,
             "order_by_fields": "timestamp",
             "filter": "item_id == " + this.itemId + "u",
+            "offset": offset,
+            "limit": limit,
         }).then(response => {
             let data = [];
             for (let i in response.data.results) {
@@ -38,11 +40,22 @@ class ChartComponent extends Component {
                     y: item.value,
                 });
             }
-            this.setState({
-                data: data,
-            });
-
             if (data.length === 0) {
+                callback(dataAccumulator);
+            } else {
+                dataAccumulator = dataAccumulator.concat(data);
+                this.loadData(offset + limit, limit, dataAccumulator, callback);
+            }
+        });
+    };
+
+    componentDidMount() {
+        var data = [];
+        this.loadData(0, 512, data, (resultData) => {
+            if (resultData.length === 0) {
+                this.setState({
+                    data: resultData,
+                });
                 return;
             }
 
@@ -50,7 +63,7 @@ class ChartComponent extends Component {
 
             chart.paddingRight = 20;
 
-            chart.data = data;
+            chart.data = resultData;
 
             let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
             dateAxis.renderer.grid.template.location = 0;
@@ -71,6 +84,10 @@ class ChartComponent extends Component {
             chart.scrollbarX = scrollbarX;
 
             this.chart = chart;
+
+            this.setState({
+                data: resultData,
+            });
         });
     }
 
@@ -82,11 +99,22 @@ class ChartComponent extends Component {
 
     render() {
         return (
-            typeof (this.state.data) === "undefined" ?
-                <h4>Загрузка...</h4>
-                : this.state.data.length > 0 ?
-                <div id={this.id} style={{width: "100%", height: "500px"}}/>
-                : <h4>Ничего нет :(</h4>
+            <div style={{width: "100%"}}>
+                {
+                    typeof (this.state.data) === "undefined" ?
+                        <h4>Загрузка...</h4>
+                        : this.state.data.length === 0 ?
+                        <h4>Ничего нет :(</h4>
+                        : null
+                }
+                {
+                    <div id={this.id} style={{
+                        width: "100%",
+                        height: typeof (this.state.data) !== "undefined" && this.state.data.length > 0 ? "500px" : "0px",
+                        overflow: "hidden",
+                    }}/>
+                }
+            </div>
         );
     }
 
