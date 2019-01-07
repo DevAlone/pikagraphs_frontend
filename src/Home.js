@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Block from "./Block";
 import NiceLink from "./NiceLink";
+import Graph from "./Graph";
 
 class Home extends Component {
     constructor(params) {
@@ -26,24 +27,29 @@ class Home extends Component {
                 </Block>
 
                 <h2>Распределение пользователей по дате регистрации</h2>
-                <app-graph graphType="distribution" graphId="user/signup_timestamp">
-
-                </app-graph>
+                <Block>
+                    // TODO: доделать
+                </Block>
 
                 <h2>Количество пользователей в очереди(если мало, то всё ок)</h2>
-                <app-graph graphType="statistics" graphId="users_in_queue_count">
+                <Graph
+                    modelName={"number_of_users_to_process_entries"}
+                />
 
-                </app-graph>
+                <h2>Распределение пользователей по периоду обновления</h2>
+                <Block>
+                    // TODO: доделать
+                </Block>
 
-                <h2>Распределение пользователей по рейтингу</h2>
-                <h2>Распределение пользователей по comments_count</h2>
-                <h2>Распределение пользователей по posts_count</h2>
-                <h2>Распределение пользователей по hot_posts_count</h2>
-                <h2>Распределение пользователей по pluses_count</h2>
-                <h2>Распределение пользователей по minuses_count</h2>
-                <h2>Распределение пользователей по subscribers_count</h2>
-                <h2>Распределение пользователей по updating_period</h2>
-                <h2>Распределение пользователей по last_update_timestamp</h2>
+                <h2>Распределение пользователей по времени последнего обновления</h2>
+                <Block>
+                    // TODO: доделать
+                </Block>
+
+                <h2>Распределение пользователей по времени следующего обновления</h2>
+                <Block>
+                    // TODO: доделать
+                </Block>
             </div>
         );
     }

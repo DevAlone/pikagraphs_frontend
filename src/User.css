@@ -35,6 +35,10 @@
 
 }
 
+.userDataTableCell img {
+    height: 30px;
+}
+
 .userDataTableCellLeft {
 }
 

@@ -10,6 +10,7 @@ import ExpansionPanelDetails from "@material-ui/core/es/ExpansionPanelDetails/Ex
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Block from "./Block";
 import ModelFieldHistory from "./ModelFieldHistory";
+import timestampToString from "./date_utils";
 
 const styles = theme => ({
     userDataTableSummary: {
@@ -54,6 +55,7 @@ class User extends Component {
         }
 
         const tableRows = [
+            // TODO: add icons
             ["Рейтинг", this.state.user.rating, "rating"],
             ["Количество подписчиков", this.state.user.number_of_subscribers, "number_of_subscribers"],
             ["Количество комментариев", this.state.user.number_of_comments, "number_of_comments"],
@@ -64,7 +66,7 @@ class User extends Component {
             ["Никнейм", this.state.user.username, "username"],
             ["Пол", this.state.user.gender, "gender"],
             ["Дата регистрации", this.state.user.signup_timestamp, "signup_timestamp"],
-            ["Аватар", this.state.user.avatar_url, "avatar_url"],
+            ["Аватар", <img src={this.state.user.avatar_url}/>, "avatar_url", "image"],
             ["Подтверждён", this.state.user.approved_text, "approved_text"],
             ["Награды", this.state.user.award_ids, "award_ids"],
             ["Сообщества", this.state.user.community_ids, "community_ids"],
@@ -73,9 +75,6 @@ class User extends Component {
             ["Рейтинг скрыт", this.state.user.is_rating_hidden, "is_rating_hidden"],
             ["Забанен", this.state.user.is_banned, "is_banned"],
             ["Постоянно забанен", this.state.user.is_permanently_banned, "is_permanently_banned"],
-            ["Добавлен в pikagraphs", this.state.user.added_timestamp, "added_timestamp"],
-            ["Дата последнего обновления", this.state.user.last_update_timestamp, "last_update_timestamp"],
-            ["Дата следующего обновления", this.state.user.next_update_timestamp, "next_update_timestamp"],
         ];
 
         return (
@@ -108,6 +107,9 @@ class User extends Component {
                                         modelName={"pikabu_user"}
                                         fieldName={row[2]}
                                         itemId={this.state.user.pikabu_id}
+                                        fieldType={
+                                            typeof (row[3]) === "undefined" ? "number" : row[3]
+                                        }
                                     />
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
@@ -115,9 +117,28 @@ class User extends Component {
                     })}
                     <Block>
                         <div className={"userDataTableRow"}>
+                            <span className={"userDataTableCell userDataTableCellLeft"}>Добавлен в pikagraphs</span>
+                            <span
+                                className={"userDataTableCell userDataTableCellRight"}>
+                                {timestampToString(this.state.user.added_timestamp)}
+                            </span>
+                        </div>
+                        <div className={"userDataTableRow"}>
                             <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
                             <span
                                 className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
+                        </div>
+                        <div className={"userDataTableRow"}>
+                            <span
+                                className={"userDataTableCell userDataTableCellLeft"}>Дата последнего обновления</span>
+                            <span
+                                className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.last_update_timestamp)}</span>
+                        </div>
+                        <div className={"userDataTableRow"}>
+                            <span
+                                className={"userDataTableCell userDataTableCellLeft"}>Дата следующего обновления</span>
+                            <span
+                                className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.next_update_timestamp)}</span>
                         </div>
                     </Block>
                 </div>
