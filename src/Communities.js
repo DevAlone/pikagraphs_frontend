@@ -37,8 +37,8 @@ class Communities extends Component {
 
     fetchMore = () => {
         const filter = this.state.searchParamsState.searchText.length > 0 ?
-            'ilike(name, "%' + this.state.searchParamsState.searchText + '"%) || ' +
-            'ilike(link_name, "%' + this.state.searchParamsState.searchText + '"%)' :
+            'ilike(name, "%' + this.state.searchParamsState.searchText + '%") || ' +
+            'ilike(link_name, "%' + this.state.searchParamsState.searchText + '%")' :
             '';
         DoRequest('list_model', {
             name: 'pikabu_community',

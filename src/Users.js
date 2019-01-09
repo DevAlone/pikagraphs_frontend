@@ -36,7 +36,7 @@ class Users extends Component {
 
     fetchMore(page) {
         const filter = this.state.searchParamsState.searchText.length > 0 ?
-            'ilike(username, "%' + this.state.searchParamsState.searchText + '"%)' :
+            'ilike(username, "%' + this.state.searchParamsState.searchText + '%")' :
             '';
         DoRequest('list_model', {
             name: 'pikabu_user',

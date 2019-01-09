@@ -21,6 +21,7 @@ class SearchParams extends Component {
             orderByFieldText: this.props.orderByFields[Object.keys(this.props.orderByFields)[0]],
             reversedOrder: true,
             filterFields: [],
+            searchText: '',
         };
         this.props.onStateChanged(this.state);
         this.searchText = '';
@@ -68,13 +69,13 @@ class SearchParams extends Component {
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
         }
-        this.timeout = setTimeout(() => {
+        this.searchTimeout = setTimeout(() => {
             this.setState(prevState => {
                 prevState.searchText = this.searchText;
                 this.props.onStateChanged(prevState);
                 return prevState;
             });
-        }, 300);
+        }, 500);
     };
 
     render() {
