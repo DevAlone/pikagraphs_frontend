@@ -23,19 +23,20 @@ class SearchParams extends Component {
             filterFields: [],
         };
         this.props.onStateChanged(this.state);
+        this.searchText = '';
+        this.searchTimeout = 0;
     }
 
     handleSortFieldPress(fieldName) {
         this.setState(prevState => {
-            // TODO: refactor!
-            this.state.reversedOrder = prevState.orderByField === fieldName
-                ? !prevState.reversedOrder : prevState.reversedOrder;
-            this.state.orderByField = fieldName;
-            this.state.orderByFieldText = this.props.orderByFields[fieldName];
+            prevState.reversedOrder = prevState.orderByField === fieldName ?
+                !prevState.reversedOrder : prevState.reversedOrder;
+            prevState.orderByField = fieldName;
+            prevState.orderByFieldText = this.props.orderByFields[fieldName];
 
-            this.props.onStateChanged(this.state);
+            this.props.onStateChanged(prevState);
 
-            return this.state;
+            return prevState;
         });
     }
 
@@ -61,14 +62,28 @@ class SearchParams extends Component {
         });
     };
 
+
+    handleSearchFieldChanged = (event) => {
+        this.searchText = event.target.value;
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+        this.timeout = setTimeout(() => {
+            this.setState(prevState => {
+                prevState.searchText = this.searchText;
+                this.props.onStateChanged(prevState);
+                return prevState;
+            });
+        }, 300);
+    };
+
     render() {
         return (
             <div className={"root"}>
                 <Paper className={"block"}>
                     <TextField
                         className={"searchField"}
-                        onChange={() => {
-                        }}
+                        onChange={event => this.handleSearchFieldChanged(event)}
                         placeholder={"Введи сюда что-нибудь"}
                     />
                 </Paper>

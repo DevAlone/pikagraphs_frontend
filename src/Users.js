@@ -35,6 +35,9 @@ class Users extends Component {
     }
 
     fetchMore(page) {
+        const filter = this.state.searchParamsState.searchText.length > 0 ?
+            'ilike(username, "%' + this.state.searchParamsState.searchText + '"%)' :
+            '';
         DoRequest('list_model', {
             name: 'pikabu_user',
             limit: this.limit,
@@ -43,6 +46,7 @@ class Users extends Component {
                 (this.state.searchParamsState.reversedOrder ?
                     '-' : '') + this.state.searchParamsState.orderByField
                 : null,
+            filter: filter,
         }).then(response => {
             this.offset += this.limit;
             response = response.data;
@@ -61,7 +65,7 @@ class Users extends Component {
     }
 
     searchParamsStateChanged(state) {
-        this.setState(prevState => {
+        this.setState(() => {
             this.offset = 0;
             return {
                 users: [],
