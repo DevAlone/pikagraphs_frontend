@@ -71,11 +71,10 @@ class Graph extends Component {
             "item_id == " + this.itemId + "u"
             : "";
 
-        if (filter.length > 0) {
-            filter += " && ";
-        }
-
         if (this.filterTimestampFrom > 0) {
+            if (filter.length > 0) {
+                filter += " && ";
+            }
             filter += "timestamp > " + (this.filterTimestampFrom - 1);
         }
 

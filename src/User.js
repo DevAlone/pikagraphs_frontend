@@ -63,7 +63,7 @@ class User extends Component {
             ["Количество горячих постов", this.state.user.number_of_hot_stories, "number_of_hot_stories"],
             ["Количество плюсов", this.state.user.number_of_pluses, "number_of_pluses"],
             ["Количество минусов", this.state.user.number_of_minuses, "number_of_minuses"],
-            ["Никнейм", this.state.user.username, "username"],
+            ["Никнейм", this.state.user.username, "username", "text"],
             ["Пол", this.state.user.gender, "gender"],
             ["Дата регистрации", this.state.user.signup_timestamp, "signup_timestamp"],
             ["Аватар", <img src={this.state.user.avatar_url}/>, "avatar_url", "image"],
