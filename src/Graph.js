@@ -1,24 +1,21 @@
 import React, {Component} from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
 import "./User.css";
-/*
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
-
-*/
-/*
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
-
-*/
 import 'amcharts3';
 import 'amcharts3/amcharts/serial';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import AmCharts from '@amcharts/amcharts3-react';
 import DoRequest from "./api";
+import Button from "@material-ui/core/Button";
 
-const styles = theme => ({});
+const styles = theme => ({
+    toggleButtonGroup: {
+        background: "none",
+        border: "none",
+        boxShadow: "none",
+    }
+});
 
 class Graph extends Component {
     constructor(props) {
@@ -29,12 +26,58 @@ class Graph extends Component {
         this.isLogarithmic = false;
         this.graphType = "line";  // "column";  // for bar charts
         this.xIsTimestamp = true;
+        this.filterTimestampFrom = Math.round(new Date() / 1000) - 3600 * 24;
+        this.timestampFilterCurrentButton = "last day";
     }
 
+    toggleTimestampFilterButton = (event) => {
+        this.timestampFilterCurrentButton = event.target.value;
+        switch (event.target.value) {
+            case "last day":
+                this.setTimestampFromFilter(24 * 3600);
+                break;
+            case "last week":
+                this.setTimestampFromFilter(7 * 24 * 3600);
+                break;
+            case "last month":
+                this.setTimestampFromFilter(30 * 24 * 3600);
+                break;
+            case "last 3 months":
+                this.setTimestampFromFilter(3 * 30 * 24 * 3600);
+                break;
+            case "last year":
+                this.setTimestampFromFilter(12 * 30 * 24 * 3600);
+                break;
+            case "all time":
+                this.setTimestampFromFilter(0);
+                break;
+            default:
+                console.error("unknown type \"" + event.target.value + "\"");
+        }
+    };
+
+    setTimestampFromFilter = (from) => {
+        console.log(from);
+        if (from === 0) {
+            this.filterTimestampFrom = 0;
+        } else {
+            this.filterTimestampFrom = Math.round(new Date() / 1000) - from;
+        }
+        this.componentDidMount();
+    };
+
     loadData = (offset, limit, dataAccumulator, callback) => {
-        const filter = this.itemId != null ?
+        let filter = this.itemId != null ?
             "item_id == " + this.itemId + "u"
             : "";
+
+        if (filter.length > 0) {
+            filter += " && ";
+        }
+
+        if (this.filterTimestampFrom > 0) {
+            filter += "timestamp > " + (this.filterTimestampFrom - 1);
+        }
 
         DoRequest("list_model", {
             "name": this.modelName,
@@ -170,8 +213,39 @@ class Graph extends Component {
             "export": {"enabled": true}
         };
 
+        const {classes} = this.props;
+
         return (
             <div style={{width: "100%"}}>
+                {
+                    <ToggleButtonGroup className={classes.toggleButtonGroup} exclusive
+                                       value={this.timestampFilterCurrentButton}>
+                        <ToggleButton component={Button}
+                                      value="all time"
+                                      onClick={this.toggleTimestampFilterButton}>
+                            Всё время</ToggleButton>
+                        <ToggleButton component={Button}
+                                      value="last year"
+                                      onClick={this.toggleTimestampFilterButton}>
+                            Год</ToggleButton>
+                        <ToggleButton component={Button}
+                                      value="last 3 months"
+                                      onClick={this.toggleTimestampFilterButton}>
+                            3 Месяца</ToggleButton>
+                        <ToggleButton component={Button}
+                                      value="last month"
+                                      onClick={this.toggleTimestampFilterButton}>
+                            Месяц</ToggleButton>
+                        <ToggleButton component={Button}
+                                      value="last week"
+                                      onClick={this.toggleTimestampFilterButton}>
+                            Неделя</ToggleButton>
+                        <ToggleButton component={Button}
+                                      value="last day"
+                                      onClick={this.toggleTimestampFilterButton}>
+                            День</ToggleButton>
+                    </ToggleButtonGroup>
+                }
                 {
                     typeof (this.state.data) === "undefined" ?
                         <h4>Загрузка...</h4>

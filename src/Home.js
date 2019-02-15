@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import Block from "./Block";
 import NiceLink from "./NiceLink";
-import Graph from "./Graph";
 
 class Home extends Component {
     constructor(params) {
         super(params);
 
         this.state = {
-            'numberOfUsers': 'loading...',
+            'numberOfUsers': 'loading...',  // TODO: complete
         }
     }
 
@@ -27,26 +26,6 @@ class Home extends Component {
                 </Block>
 
                 <h2>Распределение пользователей по дате регистрации</h2>
-                <Block>
-                    // TODO: доделать
-                </Block>
-
-                <h2>Количество пользователей в очереди(если мало, то всё ок)</h2>
-                <Graph
-                    modelName={"number_of_users_to_process_entries"}
-                />
-
-                <h2>Распределение пользователей по периоду обновления</h2>
-                <Block>
-                    // TODO: доделать
-                </Block>
-
-                <h2>Распределение пользователей по времени последнего обновления</h2>
-                <Block>
-                    // TODO: доделать
-                </Block>
-
-                <h2>Распределение пользователей по времени следующего обновления</h2>
                 <Block>
                     // TODO: доделать
                 </Block>
