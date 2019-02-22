@@ -26,7 +26,13 @@ class Graph extends Component {
         this.isLogarithmic = false;
         this.graphType = "line";  // "column";  // for bar charts
         this.xIsTimestamp = true;
+        this.minimumNumberOfResults = 3;
         this.timestampFilterButtons = [
+            {
+                "type": "lastHour",
+                "pretty": "час",
+                "filterFrom": 3600,
+            },
             {
                 "type": "lastDay",
                 "pretty": "день",
@@ -124,7 +130,7 @@ class Graph extends Component {
     updateData = () => {
         let data = [];
         this.loadData(0, 512, data, (resultData) => {
-            if (resultData.length === 0) {
+            if (resultData.length < this.minimumNumberOfResults) {
                 const filterButtonIndex = this.timestampFilterButtons.findIndex(value => {
                     return value.type === this.timestampFilterCurrentButton;
                 });
@@ -142,7 +148,7 @@ class Graph extends Component {
     };
 
     componentDidMount() {
-        this.timestampFilterCurrentButton = this.props.defaultTimestampFilter || "lastMonth";
+        this.timestampFilterCurrentButton = this.props.defaultTimestampFilter || this.timestampFilterButtons[0].type;
         this.toggleTimestampFilterButton({target: {value: this.timestampFilterCurrentButton}})
     }
 
