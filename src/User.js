@@ -9,8 +9,8 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/es/ExpansionPanelDetails/ExpansionPanelDetails";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Block from "./Block";
-import ModelFieldHistory from "./ModelFieldHistory";
 import timestampToString from "./date_utils";
+import ModelFieldHistory from "./ModelFieldHistory";
 
 const styles = theme => ({
     userDataTableSummary: {
@@ -22,7 +22,9 @@ const styles = theme => ({
 class User extends Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            versionFieldsState: {},
+        };
         this.id = this.props.match.params.id;
         this.updateUser();
     }
@@ -54,6 +56,22 @@ class User extends Component {
             );
         }
 
+        let gender;
+        switch (parseInt(this.state.user.gender)) {
+            case 0:
+                gender = "не указан";
+                break;
+            case 1:
+                gender = "мужской";
+                break;
+            case 2:
+                gender = "женский";
+                break;
+            default:
+                gender = this.state.user.gender;
+                break;
+        }
+
         const tableRows = [
             // TODO: add icons
             ["Рейтинг", this.state.user.rating, "rating"],
@@ -64,17 +82,17 @@ class User extends Component {
             ["Количество плюсов", this.state.user.number_of_pluses, "number_of_pluses"],
             ["Количество минусов", this.state.user.number_of_minuses, "number_of_minuses"],
             ["Никнейм", this.state.user.username, "username", "text"],
-            ["Пол", this.state.user.gender, "gender"],
-            ["Дата регистрации", this.state.user.signup_timestamp, "signup_timestamp"],
-            ["Аватар", <img src={this.state.user.avatar_url}/>, "avatar_url", "image"],
-            ["Подтверждён", this.state.user.approved_text, "approved_text"],
-            ["Награды", this.state.user.award_ids, "award_ids"],
-            ["Сообщества", this.state.user.community_ids, "community_ids"],
-            ["Баны", this.state.user.ban_history_item_ids, "ban_history_item_ids"],
-            ["Дата окончания бана", this.state.user.ban_end_timestamp, "ban_end_timestamp"],
-            ["Рейтинг скрыт", this.state.user.is_rating_hidden, "is_rating_hidden"],
-            ["Забанен", this.state.user.is_banned, "is_banned"],
-            ["Постоянно забанен", this.state.user.is_permanently_banned, "is_permanently_banned"],
+            ["Пол", gender, "gender", "text"],
+            ["Дата регистрации", timestampToString(this.state.user.signup_timestamp), "signup_timestamp", "text"],
+            ["Аватар", <img alt="аватар" src={this.state.user.avatar_url}/>, "avatar_url", "image"],
+            ["Подтверждён", this.state.user.approved_text.length > 0 ? this.state.user.approved_text : "нет", "approved_text", "text"],
+            ["Дата окончания бана", timestampToString(this.state.user.ban_end_timestamp), "ban_end_timestamp", "text"],
+            ["Рейтинг скрыт", this.state.user.is_rating_hidden, "is_rating_hidden", "text"],
+            ["Забанен", this.state.user.is_banned, "is_banned", "text"],
+            ["Постоянно забанен", this.state.user.is_permanently_banned, "is_permanently_banned", "text"],
+            ["Награды", this.state.user.award_ids, "award_ids", "text"],
+            ["Сообщества", this.state.user.community_ids, "community_ids", "text"],
+            ["Баны", this.state.user.ban_history_item_ids, "ban_history_item_ids", "text"],
         ];
 
         return (
@@ -89,7 +107,14 @@ class User extends Component {
                 <div className={"userDataTable"}>
                     {tableRows.map((row, index) => {
                         return (
-                            <ExpansionPanel key={row[0]}>
+                            <ExpansionPanel key={row[0]} onChange={isOpened => {
+                                this.setState(prevState => {
+                                    if (isOpened) {
+                                        prevState.versionFieldsState[row[0]] = true;
+                                    }
+                                    return prevState;
+                                });
+                            }}>
                                 <ExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon/>}
                                     className={classes.userDataTableSummary}
@@ -98,35 +123,45 @@ class User extends Component {
                                     <div key={row[0]} className={"userDataTableRow"}>
                                         <span className={"userDataTableCell userDataTableCellLeft"}>{row[0]}</span>
                                         <span className={"userDataTableCell userDataTableCellRight"}>{
-                                            row[1]
+                                            Array.isArray(row[1]) ?
+                                                row[1].length === 0 ?
+                                                    "ничего нет" : row[1].toString() :
+                                                typeof row[1] === "object" ?
+                                                    row[1] : typeof row[1] === "boolean" ?
+                                                    row[1] ? "да" : "нет" :
+                                                    row[1].toString()
                                         }</span>
                                     </div>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
-                                    <ModelFieldHistory
-                                        modelName={"pikabu_user"}
-                                        fieldName={row[2]}
-                                        itemId={this.state.user.pikabu_id}
-                                        fieldType={
-                                            typeof (row[3]) === "undefined" ? "number" : row[3]
-                                        }
-                                    />
+                                    {
+                                        typeof this.state.versionFieldsState[row[0]] !== "undefined" && this.state.versionFieldsState[row[0]] ?
+                                            <ModelFieldHistory
+                                                modelName={"pikabu_user"}
+                                                fieldName={row[2]}
+                                                itemId={this.state.user.pikabu_id}
+                                                fieldType={
+                                                    typeof (row[3]) === "undefined" ? "number" : row[3]
+                                                }
+                                            /> :
+                                            "Нажмите открыть"
+                                    }
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
                         );
                     })}
                     <Block>
                         <div className={"userDataTableRow"}>
+                            <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
+                            <span
+                                className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
+                        </div>
+                        <div className={"userDataTableRow"}>
                             <span className={"userDataTableCell userDataTableCellLeft"}>Добавлен в pikagraphs</span>
                             <span
                                 className={"userDataTableCell userDataTableCellRight"}>
                                 {timestampToString(this.state.user.added_timestamp)}
                             </span>
-                        </div>
-                        <div className={"userDataTableRow"}>
-                            <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
-                            <span
-                                className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
                         </div>
                         <div className={"userDataTableRow"}>
                             <span

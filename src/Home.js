@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Block from "./Block";
 import NiceLink from "./NiceLink";
+import Graph from "./Graph";
 
 class Home extends Component {
     constructor(params) {
@@ -27,7 +28,10 @@ class Home extends Component {
 
                 <h2>Распределение пользователей по дате регистрации</h2>
                 <Block>
-                    // TODO: доделать
+                    <Graph
+                        modelName="pikabu_users_signup_timestamp_distribution_86400"
+                        defaultTimestampFilter={"lastYear"}
+                    />
                 </Block>
             </div>
         );

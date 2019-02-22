@@ -26,44 +26,63 @@ class Graph extends Component {
         this.isLogarithmic = false;
         this.graphType = "line";  // "column";  // for bar charts
         this.xIsTimestamp = true;
-        this.filterTimestampFrom = Math.round(new Date() / 1000) - 3600 * 24;
-        this.timestampFilterCurrentButton = "last day";
+        this.timestampFilterButtons = [
+            {
+                "type": "lastDay",
+                "pretty": "день",
+                "filterFrom": 24 * 3600,
+            },
+            {
+                "type": "lastWeek",
+                "pretty": "неделя",
+                "filterFrom": 7 * 24 * 3600,
+            },
+            {
+                "type": "lastMonth",
+                "pretty": "месяц",
+                "filterFrom": 30 * 24 * 3600,
+            },
+            {
+                "type": "last3Months",
+                "pretty": "3 месяца",
+                "filterFrom": 3 * 30 * 24 * 3600,
+            },
+            {
+                "type": "lastYear",
+                "pretty": "год",
+                "filterFrom": 12 * 30 * 24 * 3600,
+            },
+            {
+                "type": "allTime",
+                "pretty": "всё время",
+                "filterFrom": 0,
+            },
+        ];
     }
 
     toggleTimestampFilterButton = (event) => {
+        this.setState({
+            data: null,
+        });
         this.timestampFilterCurrentButton = event.target.value;
-        switch (event.target.value) {
-            case "last day":
-                this.setTimestampFromFilter(24 * 3600);
-                break;
-            case "last week":
-                this.setTimestampFromFilter(7 * 24 * 3600);
-                break;
-            case "last month":
-                this.setTimestampFromFilter(30 * 24 * 3600);
-                break;
-            case "last 3 months":
-                this.setTimestampFromFilter(3 * 30 * 24 * 3600);
-                break;
-            case "last year":
-                this.setTimestampFromFilter(12 * 30 * 24 * 3600);
-                break;
-            case "all time":
-                this.setTimestampFromFilter(0);
-                break;
-            default:
-                console.error("unknown type \"" + event.target.value + "\"");
+        const filterButton = this.timestampFilterButtons.find(value => {
+            return value.type === event.target.value;
+        });
+        if (typeof filterButton === "undefined") {
+            console.error("unknown type \"" + event.target.value + "\"");
+            return;
         }
+
+        this.setTimestampFromFilter(filterButton.filterFrom);
     };
 
     setTimestampFromFilter = (from) => {
-        console.log(from);
         if (from === 0) {
             this.filterTimestampFrom = 0;
         } else {
             this.filterTimestampFrom = Math.round(new Date() / 1000) - from;
         }
-        this.componentDidMount();
+        this.updateData();
     };
 
     loadData = (offset, limit, dataAccumulator, callback) => {
@@ -102,24 +121,29 @@ class Graph extends Component {
         });
     };
 
-    componentDidMount() {
-        var data = [];
+    updateData = () => {
+        let data = [];
         this.loadData(0, 512, data, (resultData) => {
             if (resultData.length === 0) {
-                this.setState({
-                    data: resultData,
+                const filterButtonIndex = this.timestampFilterButtons.findIndex(value => {
+                    return value.type === this.timestampFilterCurrentButton;
                 });
-                return;
+                if (typeof filterButtonIndex !== "undefined" && filterButtonIndex >= 0 && filterButtonIndex < this.timestampFilterButtons.length - 1) {
+                    this.timestampFilterButtons.splice(filterButtonIndex, 1);
+                    this.toggleTimestampFilterButton({target: {value: this.timestampFilterButtons[filterButtonIndex].type}});
+                    return;
+                }
             }
 
             this.setState({
                 data: resultData,
             });
         });
-    }
+    };
 
-    componentWillUnmount() {
-        // clearInterval(this.state.timer);
+    componentDidMount() {
+        this.timestampFilterCurrentButton = this.props.defaultTimestampFilter || "lastMonth";
+        this.toggleTimestampFilterButton({target: {value: this.timestampFilterCurrentButton}})
     }
 
     render() {
@@ -217,47 +241,45 @@ class Graph extends Component {
         return (
             <div style={{width: "100%"}}>
                 {
-                    <ToggleButtonGroup className={classes.toggleButtonGroup} exclusive
-                                       value={this.timestampFilterCurrentButton}>
-                        <ToggleButton component={Button}
-                                      value="all time"
-                                      onClick={this.toggleTimestampFilterButton}>
-                            Всё время</ToggleButton>
-                        <ToggleButton component={Button}
-                                      value="last year"
-                                      onClick={this.toggleTimestampFilterButton}>
-                            Год</ToggleButton>
-                        <ToggleButton component={Button}
-                                      value="last 3 months"
-                                      onClick={this.toggleTimestampFilterButton}>
-                            3 Месяца</ToggleButton>
-                        <ToggleButton component={Button}
-                                      value="last month"
-                                      onClick={this.toggleTimestampFilterButton}>
-                            Месяц</ToggleButton>
-                        <ToggleButton component={Button}
-                                      value="last week"
-                                      onClick={this.toggleTimestampFilterButton}>
-                            Неделя</ToggleButton>
-                        <ToggleButton component={Button}
-                                      value="last day"
-                                      onClick={this.toggleTimestampFilterButton}>
-                            День</ToggleButton>
+                    <ToggleButtonGroup
+                        className={classes.toggleButtonGroup}
+                        exclusive
+                        value={this.timestampFilterCurrentButton}>
+                        {
+                            this.timestampFilterButtons.map(button => {
+                                return (
+                                    <ToggleButton
+                                        key={button.type}
+                                        component={Button}
+                                        value={button.type}
+                                        onClick={this.toggleTimestampFilterButton}
+                                        disabled={typeof this.state.data === "undefined" || this.state.data === null}
+                                    >
+                                        {button.pretty}
+                                    </ToggleButton>
+                                );
+                            })
+                        }
                     </ToggleButtonGroup>
                 }
                 {
-                    typeof (this.state.data) === "undefined" ?
+                    typeof (this.state.data) === "undefined" || this.state.data === null ?
                         <h4>Загрузка...</h4>
                         : this.state.data.length === 0 ?
                         <h4>Ничего нет :(</h4>
                         : null
                 }
                 {
-                    <AmCharts.React style={{
+                    <div style={{
                         width: "100%",
-                        height: typeof (this.state.data) !== "undefined" && this.state.data.length > 0 ? "500px" : "0px",
-                        overflow: "hidden",
-                    }} options={config}/>
+                        height: "500px",
+                    }}>
+                        <AmCharts.React style={{
+                            width: "100%",
+                            height: typeof (this.state.data) !== "undefined" && this.state.data !== null && this.state.data.length > 0 ? "500px" : "0",
+                            overflow: "hidden",
+                        }} options={config}/>
+                    </div>
                 }
             </div>
         );
