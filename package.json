@@ -41,5 +41,6 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "babel-loader": "8.0.4",
   "proxy": "http://10.0.3.6:8080"
 }
