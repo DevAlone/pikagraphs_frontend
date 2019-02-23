@@ -8,6 +8,7 @@ import Row from "./Row";
 import SearchParams from "./SearchParams";
 import InfiniteScroll from "react-infinite-scroll-component";
 import NiceLink from "./NiceLink";
+import timestampToString from "./date_utils";
 
 const styles = theme => ({
     avatar: {
@@ -129,14 +130,22 @@ class Users extends Component {
                                 >
                                     <div className="userLink">
                                         <BeautifulListItem
-                                            href={"/user/" + value.username}
+                                            href={"/user/pikabu_id==" + value.pikabu_id}
                                         >
                                             <img className={classes.avatar} src={value.avatar_url} alt={"avatar"}/>
                                             <ListItemText primary={value.username}/>
                                             {this.state.searchParamsState.orderByFieldText[1] != null ?
                                                 <Row>
                                                     <ListItemText>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
-                                                    <ListItemText>{value[this.state.searchParamsState.orderByField]}</ListItemText>
+                                                    <ListItemText>{
+                                                        this.state.searchParamsState.orderByField === "signup_timestamp" ||
+                                                        this.state.searchParamsState.orderByField === "ban_end_timestamp" ||
+                                                        this.state.searchParamsState.orderByField === "added_timestamp" ||
+                                                        this.state.searchParamsState.orderByField === "last_update_timestamp" ||
+                                                        this.state.searchParamsState.orderByField === "next_update_timestamp" ?
+                                                            timestampToString(value[this.state.searchParamsState.orderByField]) :
+                                                            value[this.state.searchParamsState.orderByField]
+                                                    }</ListItemText>
                                                 </Row>
                                                 : null
                                             }

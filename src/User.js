@@ -4,35 +4,24 @@ import Row from "./Row";
 import "./User.css";
 import DoRequest from "./api";
 import NiceLink from "./NiceLink";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelDetails from "@material-ui/core/es/ExpansionPanelDetails/ExpansionPanelDetails";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Block from "./Block";
 import timestampToString from "./date_utils";
-import ModelFieldHistory from "./ModelFieldHistory";
+import ItemDataTable from "./ItemDataTable";
+import Block from "./Block";
 
-const styles = theme => ({
-    userDataTableSummary: {
-        // padding: "0px",
-        // height: "40px",
-    },
-});
+const styles = theme => ({});
 
 class User extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            versionFieldsState: {},
-        };
         this.id = this.props.match.params.id;
+        this.state = {};
         this.updateUser();
     }
 
     updateUser() {
         var filterRequest = '';
-        if (this.id.match(/^[0-9]+$/g)) {
-            filterRequest = 'pikabu_id == ' + this.id + 'u';
+        if (this.id.match(/^pikabu_id==[0-9]+$/g)) {
+            filterRequest = this.id + "u";
         } else {
             filterRequest = 'ilike(username, "' + this.id + '")';
         }
@@ -42,6 +31,12 @@ class User extends Component {
             limit: 1,
             filter: filterRequest,
         }).then(response => {
+            if (response.data.results.length === 0) {
+                this.setState({
+                    user: null,
+                });
+                return;
+            }
             this.setState({
                 user: response.data.results[0],
             });
@@ -49,10 +44,15 @@ class User extends Component {
     }
 
     render() {
-        const {classes} = this.props;
-        if (typeof (this.state.user) === "undefined" || this.state.user === null) {
+        // const {classes} = this.props;
+        if (typeof (this.state.user) === "undefined") {
             return (
                 <div className="Loading">Загрузка...</div>
+            );
+        }
+        if (this.state.user === null) {
+            return (
+                <div>Ничего не найдено</div>
             );
         }
 
@@ -104,79 +104,33 @@ class User extends Component {
                     </NiceLink>
                     <span/>
                 </Row>
-                <div className={"userDataTable"}>
-                    {tableRows.map((row, index) => {
-                        return (
-                            <ExpansionPanel key={row[0]} onChange={isOpened => {
-                                this.setState(prevState => {
-                                    if (isOpened) {
-                                        prevState.versionFieldsState[row[0]] = true;
-                                    }
-                                    return prevState;
-                                });
-                            }}>
-                                <ExpansionPanelSummary
-                                    expandIcon={<ExpandMoreIcon/>}
-                                    className={classes.userDataTableSummary}
-                                    title={"Тыкни, чтоб показать историю"}
-                                >
-                                    <div key={row[0]} className={"userDataTableRow"}>
-                                        <span className={"userDataTableCell userDataTableCellLeft"}>{row[0]}</span>
-                                        <span className={"userDataTableCell userDataTableCellRight"}>{
-                                            Array.isArray(row[1]) ?
-                                                row[1].length === 0 ?
-                                                    "ничего нет" : row[1].toString() :
-                                                typeof row[1] === "object" ?
-                                                    row[1] : typeof row[1] === "boolean" ?
-                                                    row[1] ? "да" : "нет" :
-                                                    row[1].toString()
-                                        }</span>
-                                    </div>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                    {
-                                        typeof this.state.versionFieldsState[row[0]] !== "undefined" && this.state.versionFieldsState[row[0]] ?
-                                            <ModelFieldHistory
-                                                modelName={"pikabu_user"}
-                                                fieldName={row[2]}
-                                                itemId={this.state.user.pikabu_id}
-                                                fieldType={
-                                                    typeof (row[3]) === "undefined" ? "number" : row[3]
-                                                }
-                                            /> :
-                                            "Нажмите открыть"
-                                    }
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
-                        );
-                    })}
-                    <Block>
-                        <div className={"userDataTableRow"}>
-                            <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
-                            <span
-                                className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
-                        </div>
-                        <div className={"userDataTableRow"}>
-                            <span className={"userDataTableCell userDataTableCellLeft"}>Добавлен в pikagraphs</span>
-                            <span
-                                className={"userDataTableCell userDataTableCellRight"}>
+                <ItemDataTable rows={tableRows} itemData={this.state.user} modelName={"pikabu_user"}/>
+                <Block>
+                    <div className={"userDataTableRow"}>
+                        <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
+                        <span
+                            className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
+                    </div>
+                    <div className={"userDataTableRow"}>
+                        <span className={"userDataTableCell userDataTableCellLeft"}>Добавлен в pikagraphs</span>
+                        <span
+                            className={"userDataTableCell userDataTableCellRight"}>
                                 {timestampToString(this.state.user.added_timestamp)}
                             </span>
-                        </div>
-                        <div className={"userDataTableRow"}>
+                    </div>
+                    <div className={"userDataTableRow"}>
                             <span
                                 className={"userDataTableCell userDataTableCellLeft"}>Дата последнего обновления</span>
-                            <span
-                                className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.last_update_timestamp)}</span>
-                        </div>
-                        <div className={"userDataTableRow"}>
+                        <span
+                            className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.last_update_timestamp)}</span>
+                    </div>
+                    <div className={"userDataTableRow"}>
                             <span
                                 className={"userDataTableCell userDataTableCellLeft"}>Дата следующего обновления</span>
-                            <span
-                                className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.next_update_timestamp)}</span>
-                        </div>
-                    </Block>
-                </div>
+                        <span
+                            className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.next_update_timestamp)}</span>
+                    </div>
+                </Block>
             </div>
         );
     }

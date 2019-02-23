@@ -25,8 +25,8 @@ class Graph extends Component {
         this.state = {};
         this.isLogarithmic = false;
         this.graphType = "line";  // "column";  // for bar charts
-        this.xIsTimestamp = true;
-        this.minimumNumberOfResults = 3;
+        this.xIsTimestamp = typeof this.props.xIsTimestamp !== "undefined" ? this.props.xIsTimestamp : true;
+        this.minimumNumberOfResults = 16;
         this.timestampFilterButtons = [
             {
                 "type": "lastHour",
@@ -153,11 +153,21 @@ class Graph extends Component {
     }
 
     render() {
+        let categoryAxis = {
+            "parseDates": this.xIsTimestamp,
+            "axisColor": "#DADADA",
+            "dashLength": 1,
+            "minorGridEnabled": true
+        };
+        if (this.xIsTimestamp) {
+            categoryAxis.minPeriod = "mm";
+        }
+
         const config = {
             "type": "serial",
             "theme": "light",
             "marginRight": 20,
-            "marginLeft": 20,
+            "marginLeft": 60,
             "autoMarginOffset": 20,
             "mouseWheelZoomEnabled": false,
             "valueAxes": [{
@@ -231,13 +241,7 @@ class Graph extends Component {
             },
             */
             "categoryField": "timestamp",
-            "categoryAxis": {
-                "minPeriod": "mm",
-                "parseDates": this.xIsTimestamp,
-                "axisColor": "#DADADA",
-                "dashLength": 1,
-                "minorGridEnabled": true
-            },
+            "categoryAxis": categoryAxis,
             "dataProvider": this.state.data,
             "export": {"enabled": true}
         };
@@ -283,7 +287,7 @@ class Graph extends Component {
                         <AmCharts.React style={{
                             width: "100%",
                             height: typeof (this.state.data) !== "undefined" && this.state.data !== null && this.state.data.length > 0 ? "500px" : "0",
-                            overflow: "hidden",
+                            // overflow: "hidden",
                         }} options={config}/>
                     </div>
                 }

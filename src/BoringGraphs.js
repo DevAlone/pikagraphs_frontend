@@ -13,17 +13,27 @@ class BoringGraphs extends Component {
 
                 <h2>Распределение пользователей по периоду обновления</h2>
                 <Block>
-                    // TODO: доделать
+                    <Graph
+                        modelName="pikabu_user_updating_period_distribution_3600"
+                        defaultTimestampFilter={"lastYear"}
+                        xIsTimestamp={false}
+                    />
                 </Block>
 
                 <h2>Распределение пользователей по времени последнего обновления</h2>
                 <Block>
-                    // TODO: доделать
+                    <Graph
+                        modelName="pikabu_user_last_update_timestamp_distribution_86400"
+                        defaultTimestampFilter={"lastYear"}
+                    />
                 </Block>
 
                 <h2>Распределение пользователей по времени следующего обновления</h2>
                 <Block>
-                    // TODO: доделать
+                    <Graph
+                        modelName="pikabu_user_next_update_timestamp_distribution_86400"
+                        defaultTimestampFilter={"lastYear"}
+                    />
                 </Block>
             </div>
         );

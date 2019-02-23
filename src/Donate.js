@@ -37,6 +37,11 @@ class Donate extends Component {
                         patreon </NiceLink>
                 </Block>
 
+                <h2>Любая сумма единоразово на карту</h2>
+                <Block className={"block"}>
+                    4890 4943 7668 7448
+                </Block>
+
                 <h2>Любая сумма единоразово на Qiwi</h2>
                 <Block className={"block"}>
                     <div dangerouslySetInnerHTML={{__html: donateQIWIWidget}}/>

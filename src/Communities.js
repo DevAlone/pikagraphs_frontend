@@ -9,6 +9,7 @@ import SearchParams from "./SearchParams";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "./Communities.css";
 import NiceLink from "./NiceLink";
+import timestampToString from "./date_utils";
 
 const styles = theme => ({
     avatar: {
@@ -128,7 +129,12 @@ class Communities extends Component {
                                             {this.state.searchParamsState.orderByFieldText[1] != null ?
                                                 <Row>
                                                     <ListItemText>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
-                                                    <ListItemText>{value[this.state.searchParamsState.orderByField]}</ListItemText>
+                                                    <ListItemText>{
+                                                        this.state.searchParamsState.orderByField === "added_timestamp" ||
+                                                        this.state.searchParamsState.orderByField === "last_update_timestamp" ?
+                                                            timestampToString(value[this.state.searchParamsState.orderByField]) :
+                                                            value[this.state.searchParamsState.orderByField]
+                                                    }</ListItemText>
                                                 </Row>
                                                 : null
                                             }
