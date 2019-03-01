@@ -132,7 +132,11 @@ class Users extends Component {
                                         <BeautifulListItem
                                             href={"/user/pikabu_id==" + value.pikabu_id}
                                         >
-                                            <img className={classes.avatar} src={value.avatar_url} alt={"avatar"}/>
+                                            <img className={classes.avatar} src={
+                                                value.avatar_url.length > 0 ?
+                                                    value.avatar_url :
+                                                    "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png"
+                                            } alt={"avatar"}/>
                                             <ListItemText primary={value.username}/>
                                             {this.state.searchParamsState.orderByFieldText[1] != null ?
                                                 <Row>

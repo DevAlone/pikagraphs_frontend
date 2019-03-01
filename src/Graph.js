@@ -66,16 +66,16 @@ class Graph extends Component {
         ];
     }
 
-    toggleTimestampFilterButton = (event) => {
+    toggleTimestampFilterButton = (buttonType) => {
         this.setState({
             data: null,
         });
-        this.timestampFilterCurrentButton = event.target.value;
+        this.timestampFilterCurrentButton = buttonType;
         const filterButton = this.timestampFilterButtons.find(value => {
-            return value.type === event.target.value;
+            return value.type === buttonType;
         });
         if (typeof filterButton === "undefined") {
-            console.error("unknown type \"" + event.target.value + "\"");
+            console.error("unknown type \"" + buttonType + "\"");
             return;
         }
 
@@ -136,7 +136,7 @@ class Graph extends Component {
                 });
                 if (typeof filterButtonIndex !== "undefined" && filterButtonIndex >= 0 && filterButtonIndex < this.timestampFilterButtons.length - 1) {
                     this.timestampFilterButtons.splice(filterButtonIndex, 1);
-                    this.toggleTimestampFilterButton({target: {value: this.timestampFilterButtons[filterButtonIndex].type}});
+                    this.toggleTimestampFilterButton(this.timestampFilterButtons[filterButtonIndex].type);
                     return;
                 }
             }
@@ -149,7 +149,7 @@ class Graph extends Component {
 
     componentDidMount() {
         this.timestampFilterCurrentButton = this.props.defaultTimestampFilter || this.timestampFilterButtons[0].type;
-        this.toggleTimestampFilterButton({target: {value: this.timestampFilterCurrentButton}})
+        this.toggleTimestampFilterButton(this.timestampFilterCurrentButton)
     }
 
     render() {
@@ -262,7 +262,7 @@ class Graph extends Component {
                                         key={button.type}
                                         component={Button}
                                         value={button.type}
-                                        onClick={this.toggleTimestampFilterButton}
+                                        onClick={() => this.toggleTimestampFilterButton(button.type)}
                                         disabled={typeof this.state.data === "undefined" || this.state.data === null}
                                     >
                                         {button.pretty}
