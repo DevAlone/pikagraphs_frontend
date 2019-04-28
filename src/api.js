@@ -4,8 +4,10 @@ import {Component} from "react";
 const apiURL = '/api/v1';
 
 class API extends Component {
-    doRequest(method, data) {
-        return axios.post(apiURL + "/" + method, data).catch(
+    doRequest(method, data, cancelToken) {
+        return axios.post(apiURL + "/" + method, data, {
+            cancelToken: cancelToken,
+        }).catch(
             error => {
                 console.log(error.response)
                 // this.props.alert.show(error.response.error_message);

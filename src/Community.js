@@ -33,7 +33,6 @@ class Community extends Component {
     };
 
     render() {
-        const {classes} = this.props;
         if (typeof (this.state.data) === "undefined" || this.state.data === null) {
             return (
                 <div className="Loading">Загрузка...</div>
@@ -97,7 +96,7 @@ class Community extends Component {
                             </span>
                         <span className={"userDataTableCell userDataTableCellRight"}>
                                 {timestampToString(this.state.data.last_update_timestamp)}
-                            </span>
+                        </span>
                     </div>
                 </Block>
             </div>

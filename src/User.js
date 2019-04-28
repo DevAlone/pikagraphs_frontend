@@ -107,12 +107,12 @@ class User extends Component {
                 <ItemDataTable rows={tableRows} itemData={this.state.user} modelName={"pikabu_user"}/>
                 <Block>
                     <div className={"userDataTableRow"}>
-                        <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу</span>
+                        <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу </span>
                         <span
                             className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
                     </div>
                     <div className={"userDataTableRow"}>
-                        <span className={"userDataTableCell userDataTableCellLeft"}>Добавлен в pikagraphs</span>
+                        <span className={"userDataTableCell userDataTableCellLeft"}>Добавлен в pikagraphs </span>
                         <span
                             className={"userDataTableCell userDataTableCellRight"}>
                                 {timestampToString(this.state.user.added_timestamp)}
@@ -120,13 +120,13 @@ class User extends Component {
                     </div>
                     <div className={"userDataTableRow"}>
                             <span
-                                className={"userDataTableCell userDataTableCellLeft"}>Дата последнего обновления</span>
+                                className={"userDataTableCell userDataTableCellLeft"}>Дата последнего обновления </span>
                         <span
                             className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.last_update_timestamp)}</span>
                     </div>
                     <div className={"userDataTableRow"}>
                             <span
-                                className={"userDataTableCell userDataTableCellLeft"}>Дата следующего обновления</span>
+                                className={"userDataTableCell userDataTableCellLeft"}>Дата следующего обновления </span>
                         <span
                             className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.next_update_timestamp)}</span>
                     </div>

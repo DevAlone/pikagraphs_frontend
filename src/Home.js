@@ -15,9 +15,9 @@ class Home extends Component {
     render() {
         return (
             <div>
-                <h1>Pikagraphs - статистика Пикабу</h1>
+                <h1>Pikastat - статистика Пикабу</h1>
                 <Block>
-                    Pikagrahps - проект по сбору статистики сайта<span> </span>
+                    Pikastat(первое название Pikagraphs) - проект по сбору статистики сайта<span> </span>
                     <NiceLink href="https://pikabu.ru">Пикабу</NiceLink>,
                     запущенный 19 августа 2017 года.
                     За время существования был несколько раз переписан на различных технологиях для достижения большей

@@ -30,36 +30,40 @@ class SearchParams extends Component {
 
     handleSortFieldPress(fieldName) {
         this.setState(prevState => {
-            prevState.reversedOrder = prevState.orderByField === fieldName ?
-                !prevState.reversedOrder : prevState.reversedOrder;
+            prevState.reversedOrder =
+                prevState.orderByField === fieldName ?
+                    !prevState.reversedOrder :
+                    prevState.reversedOrder;
             prevState.orderByField = fieldName;
             prevState.orderByFieldText = this.props.orderByFields[fieldName];
 
-            this.props.onStateChanged(prevState);
-
             return prevState;
+        }, () => {
+            this.props.onStateChanged(this.state);
         });
     }
 
     createFilter = (fieldName, operator, value) => {
-        alert("coming soon...");
-        /*this.setState(prevState => {
+        this.setState(prevState => {
             var fields = prevState.filterFields;
             fields.push([fieldName, operator, value]);
             return {
                 filterFields: fields,
             }
-        });*/
+        });
     };
 
-    handleChangeFilter = (index, fieldName, operator, value) => {
+    handleChangeFilter = (index, filter) => {
         this.setState(prevState => {
             var fields = prevState.filterFields;
-            fields[index] = [fieldName, operator, value];
+            fields[index] = filter;
             console.log(fields);
+
             return {
                 filterFields: fields,
             };
+        }, () => {
+            this.props.onStateChanged(this.state);
         });
     };
 
@@ -155,8 +159,9 @@ class SearchParams extends Component {
                                         fieldName={value[0]}
                                         fieldHumanReadableName={this.props.filterByFields[value[0]][0]}
                                         fieldConfig={this.props.filterByFields[value[0]][1]}
-                                        onChange={(fieldName, operator, value) => {
-                                            this.handleChangeFilter(index, fieldName, operator, value);
+                                        fieldType={this.props.filterByFields[value[0]][2]}
+                                        onChange={(filter) => {
+                                            this.handleChangeFilter(index, filter);
                                         }}
                                     />
                                 );

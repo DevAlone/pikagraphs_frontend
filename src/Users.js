@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import DoRequest from './api';
 import List from "@material-ui/core/List";
 import BeautifulListItem from "./NiceListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -9,6 +8,8 @@ import SearchParams from "./SearchParams";
 import InfiniteScroll from "react-infinite-scroll-component";
 import NiceLink from "./NiceLink";
 import timestampToString from "./date_utils";
+import axios from 'axios';
+import DoRequest from "./api";
 
 const styles = theme => ({
     avatar: {
@@ -33,12 +34,36 @@ class Users extends Component {
         this.offset = 0;
         this.limit = 64;
         // this.fetchMore();
+        this.requestCancelToken = null;
+    }
+
+    createFilters() {
+        // TODO: fix
+        console.log(this.state.searchParamsState);
+        const filtersString = this.state.searchParamsState.filterFields.join(" && ");
+        console.log("filters string is '" + filtersString + "'");
+        console.log(filtersString);
+        return filtersString
     }
 
     fetchMore(page) {
-        const filter = this.state.searchParamsState.searchText.length > 0 ?
-            'ilike(username, "%' + this.state.searchParamsState.searchText + '%")' :
-            '';
+        let filter = "";
+        if (this.state.searchParamsState.searchText.length > 0) {
+            filter += 'ilike(username, "%' + this.state.searchParamsState.searchText + '%")';
+        }
+        const filtersString = this.createFilters();
+        if (filtersString.length > 0) {
+            if (filter.length > 0) {
+                filter += " && ";
+            }
+            filter += filtersString;
+        }
+
+        if (this.requestCancelToken) {
+            this.requestCancelToken.cancel();
+        }
+        this.requestCancelToken = axios.CancelToken.source();
+
         DoRequest('list_model', {
             name: 'pikabu_user',
             limit: this.limit,
@@ -48,7 +73,7 @@ class Users extends Component {
                     '-' : '') + this.state.searchParamsState.orderByField
                 : null,
             filter: filter,
-        }).then(response => {
+        }, this.requestCancelToken.token).then(response => {
             this.offset += this.limit;
             response = response.data;
             if (response.results != null) {
@@ -73,8 +98,7 @@ class Users extends Component {
                 hasMoreItems: true,
                 searchParamsState: state,
             };
-        });
-        setTimeout(this.fetchMore, 50);
+        }, this.fetchMore);
     }
 
     render() {
@@ -101,8 +125,32 @@ class Users extends Component {
                 "next_update_timestamp": ["Следующему времени обновления", "Следующее время обновления"],
             }}
             filterByFields={{
-                "pikabu_id": ["ID на Пикабу", [">", "<", ">=", "<=", "==", "!="]],
-                "username": ["Никнейм", ["=="]],
+                "pikabu_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
+
+                "gender": ["Полу(0, 1 или 2)", ["==", "!="], "text"],
+
+                "rating": ["Рейтингу", [">=", "<=", "==", "!="], "number"],
+                "number_of_comments": ["Количеству комментариев", [">=", "<=", "==", "!="], "number"],
+                "number_of_subscribers": ["Количеству подписчиков", [">=", "<=", "==", "!="], "number"],
+                "number_of_stories": ["Количеству постов", [">=", "<=", "==", "!="], "number"],
+                "number_of_hot_stories": ["Количеству горячих постов", [">=", "<=", "==", "!="], "number"],
+                "number_of_pluses": ["Количеству плюсов", [">=", "<=", "==", "!="], "number"],
+                "number_of_minuses": ["Количеству минусов", [">=", "<=", "==", "!="], "number"],
+
+                "signup_timestamp": ["Дате регистрации(timestamp)", [">=", "<=", "==", "!="], "number"],
+                "ban_end_timestamp": ["Дате окончания бана(timestamp)", [">=", "<=", "==", "!="], "number"],
+                "added_timestamp": ["Дате добавления в pikastat", [">=", "<=", "==", "!="], "number"],
+                "last_update_timestamp": ["Дате последнего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
+                "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
+
+                "is_rating_hidden": ["Рейтинг скрыт", ["=="], "bool"],
+                "is_banned": ["Забанен", ["=="], "bool"],
+                "is_permanently_banned": ["Постоянно забанен", ["=="], "bool"],
+                "is_deleted": ["Удалён", ["=="], "bool"],
+                // "approved_text": ["", [], ""],
+                // "award_ids": ["", [], ""],
+                // "community_ids": ["", [], ""],
+                // "ban_history_item_ids": ["", [], ""],
             }}
             onStateChanged={this.searchParamsStateChanged.bind(this)}
         />;

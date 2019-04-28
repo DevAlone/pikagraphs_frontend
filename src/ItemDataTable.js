@@ -8,7 +8,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ModelFieldHistory from "./ModelFieldHistory";
 
 const styles = theme => ({
-    dataTableSummary: {},
+    dataTableSummary: {
+        userSelect: "text",
+    },
 });
 
 class ItemDataTable extends Component {
@@ -43,7 +45,7 @@ class ItemDataTable extends Component {
                                 title={"Тыкни, чтоб показать историю"}
                             >
                                 <div key={row[0]} className={"userDataTableRow"}>
-                                    <span className={"userDataTableCell userDataTableCellLeft"}>{row[0]}</span>
+                                    <span className={"userDataTableCell userDataTableCellLeft"}>{row[0] + " "}</span>
                                     <span className={"userDataTableCell userDataTableCellRight"}>{
                                         Array.isArray(row[1]) ?
                                             row[1].length === 0 ?
@@ -66,7 +68,7 @@ class ItemDataTable extends Component {
                                                 typeof (row[3]) === "undefined" ? "number" : row[3]
                                             }
                                         /> :
-                                        "Нажмите открыть"
+                                        <span></span>
                                 }
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
