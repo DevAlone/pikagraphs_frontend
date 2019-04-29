@@ -93,7 +93,7 @@ class Graph extends Component {
 
     loadData = (offset, limit, dataAccumulator, callback) => {
         let filter = this.itemId != null ?
-            "item_id == " + this.itemId + "u"
+            "item_id == " + this.itemId
             : "";
 
         if (this.filterTimestampFrom > 0) {

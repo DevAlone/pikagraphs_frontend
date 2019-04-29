@@ -36,14 +36,34 @@ class Communities extends Component {
         // this.fetchMore();
     }
 
+    createFilters() {
+        console.log(this.state.searchParamsState);
+        const filtersString = this.state.searchParamsState.filterFields.filter(filter => {
+            return filter[2].length > 0;
+        }).map(filter => {
+            return filter.join(" ");
+        }).join(" && ");
+        console.log("filters string is '" + filtersString + "'");
+        console.log(filtersString);
+        return filtersString
+    }
+
     fetchMore = () => {
         /*const filter = this.state.searchParamsState.searchText.length > 0 ?
             'ilike(name, "%' + this.state.searchParamsState.searchText + '%") || ' +
             'ilike(link_name, "%' + this.state.searchParamsState.searchText + '%")' :
             '';*/
-        const filter = this.state.searchParamsState.searchText.length > 0 ?
+        let filter = this.state.searchParamsState.searchText.length > 0 ?
             'ilike(name, "%' + this.state.searchParamsState.searchText + '%")' :
             '';
+        const filtersString = this.createFilters();
+        if (filtersString.length > 0) {
+            if (filter.length > 0) {
+                filter += " && ";
+            }
+            filter += filtersString;
+        }
+
         DoRequest('list_model', {
             name: 'pikabu_community',
             limit: this.limit,

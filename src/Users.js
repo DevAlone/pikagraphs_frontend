@@ -38,9 +38,12 @@ class Users extends Component {
     }
 
     createFilters() {
-        // TODO: fix
         console.log(this.state.searchParamsState);
-        const filtersString = this.state.searchParamsState.filterFields.join(" && ");
+        const filtersString = this.state.searchParamsState.filterFields.filter(filter => {
+            return filter[2].length > 0;
+        }).map(filter => {
+            return filter.join(" ");
+        }).join(" && ");
         console.log("filters string is '" + filtersString + "'");
         console.log(filtersString);
         return filtersString
@@ -143,10 +146,10 @@ class Users extends Component {
                 "last_update_timestamp": ["Дате последнего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
                 "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
 
-                "is_rating_hidden": ["Рейтинг скрыт", ["=="], "bool"],
-                "is_banned": ["Забанен", ["=="], "bool"],
-                "is_permanently_banned": ["Постоянно забанен", ["=="], "bool"],
-                "is_deleted": ["Удалён", ["=="], "bool"],
+                "is_rating_hidden": ["Рейтинг скрыт", ["=="], "boolean"],
+                "is_banned": ["Забанен", ["=="], "boolean"],
+                "is_permanently_banned": ["Постоянно забанен", ["=="], "boolean"],
+                "is_deleted": ["Удалён", ["=="], "boolean"],
                 // "approved_text": ["", [], ""],
                 // "award_ids": ["", [], ""],
                 // "community_ids": ["", [], ""],

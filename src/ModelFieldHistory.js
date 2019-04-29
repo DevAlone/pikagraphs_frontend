@@ -19,7 +19,7 @@ class AbstractModelFieldHistory extends Component {
 
     loadData = (offset, limit, dataAccumulator, callback) => {
         const filter = this.itemId != null ?
-            "item_id == " + this.itemId + "u"
+            "item_id == " + this.itemId
             : "";
 
         DoRequest("list_model", {

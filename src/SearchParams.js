@@ -53,11 +53,10 @@ class SearchParams extends Component {
         });
     };
 
-    handleChangeFilter = (index, filter) => {
+    handleChangeFilter = (index, fieldName, functionName, value) => {
         this.setState(prevState => {
             var fields = prevState.filterFields;
-            fields[index] = filter;
-            console.log(fields);
+            fields[index] = [fieldName, functionName, value];
 
             return {
                 filterFields: fields,
@@ -67,6 +66,15 @@ class SearchParams extends Component {
         });
     };
 
+    handleDeleteFilter = (index) => {
+        this.setState(prevState => {
+            return {
+                filterFields: prevState.filterFields.filter((_, i) => i !== index),
+            };
+        }, () => {
+            this.props.onStateChanged(this.state);
+        })
+    };
 
     handleSearchFieldChanged = (event) => {
         this.searchText = event.target.value;
@@ -139,7 +147,7 @@ class SearchParams extends Component {
                         Фильтровать по:
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
-                        <div className={"orderingButtons"}>
+                        <div className={"filteringButtons"}>
                             {Object.keys(this.props.filterByFields).map(key => {
                                 const value = this.props.filterByFields[key];
                                 return (
@@ -153,15 +161,20 @@ class SearchParams extends Component {
                                 );
                             })}
                             {this.state.filterFields.map((value, index) => {
+                                console.log("filterFields value");
+                                console.log(value)
                                 return (
                                     <FilterField
-                                        key={index}
+                                        key={value[0]}
                                         fieldName={value[0]}
                                         fieldHumanReadableName={this.props.filterByFields[value[0]][0]}
                                         fieldConfig={this.props.filterByFields[value[0]][1]}
                                         fieldType={this.props.filterByFields[value[0]][2]}
-                                        onChange={(filter) => {
-                                            this.handleChangeFilter(index, filter);
+                                        onChange={(fieldName, functionName, argument) => {
+                                            this.handleChangeFilter(index, fieldName, functionName, argument);
+                                        }}
+                                        onDeleteRequested={() => {
+                                            this.handleDeleteFilter(index);
                                         }}
                                     />
                                 );

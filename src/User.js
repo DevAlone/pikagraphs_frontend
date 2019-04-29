@@ -21,7 +21,7 @@ class User extends Component {
     updateUser() {
         var filterRequest = '';
         if (this.id.match(/^pikabu_id==[0-9]+$/g)) {
-            filterRequest = this.id + "u";
+            filterRequest = this.id;
         } else {
             filterRequest = 'ilike(username, "' + this.id + '")';
         }
