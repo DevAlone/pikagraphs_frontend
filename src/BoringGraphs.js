@@ -73,58 +73,66 @@ class BoringGraphs extends Component {
                 </ExpandableItem>
 
                 <ExpandableItem title={
-                    <BoringGraphTitle>number_of_tasks_in_channel_update_user_tasks</BoringGraphTitle>
+                    <BoringGraphTitle>number_of_items_in_channel_update_user_tasks</BoringGraphTitle>
                 }>
                     <Graph
-                        modelName="number_of_tasks_in_channel_update_user_tasks"
+                        modelName="number_of_items_in_channel_update_user_tasks"
                     />
                 </ExpandableItem>
 
                 <ExpandableItem title={
-                    <BoringGraphTitle>number_of_tasks_in_channel_parse_new_user_tasks</BoringGraphTitle>
+                    <BoringGraphTitle>number_of_items_in_channel_parse_new_user_tasks</BoringGraphTitle>
                 }>
                     <Graph
-                        modelName="number_of_tasks_in_channel_parse_new_user_tasks"
+                        modelName="number_of_items_in_channel_parse_new_user_tasks"
                     />
                 </ExpandableItem>
 
                 <ExpandableItem title={
-                    <BoringGraphTitle>number_of_tasks_in_channel_parse_deleted_or_never_existed_user_tasks</BoringGraphTitle>
+                    <BoringGraphTitle>number_of_items_in_channel_parse_deleted_or_never_existed_user_tasks</BoringGraphTitle>
                 }>
                     <Graph
-                        modelName="number_of_tasks_in_channel_parse_deleted_or_never_existed_user_tasks"
+                        modelName="number_of_items_in_channel_parse_deleted_or_never_existed_user_tasks"
                     />
                 </ExpandableItem>
 
                 <ExpandableItem title={
-                    <BoringGraphTitle>number_of_tasks_in_channel_update_story_tasks</BoringGraphTitle>
+                    <BoringGraphTitle>number_of_items_in_channel_update_story_tasks</BoringGraphTitle>
                 }>
                     <Graph
-                        modelName="number_of_tasks_in_channel_update_story_tasks"
+                        modelName="number_of_items_in_channel_update_story_tasks"
                     />
                 </ExpandableItem>
 
                 <ExpandableItem title={
-                    <BoringGraphTitle>number_of_tasks_in_channel_parse_new_story_tasks</BoringGraphTitle>
+                    <BoringGraphTitle>number_of_items_in_channel_parse_new_story_tasks</BoringGraphTitle>
                 }>
                     <Graph
-                        modelName="number_of_tasks_in_channel_parse_new_story_tasks"
+                        modelName="number_of_items_in_channel_parse_new_story_tasks"
                     />
                 </ExpandableItem>
 
                 <ExpandableItem title={
-                    <BoringGraphTitle>number_of_tasks_in_channel_parse_deleted_or_never_existed_story_tasks</BoringGraphTitle>
+                    <BoringGraphTitle>number_of_items_in_channel_parse_deleted_or_never_existed_story_tasks</BoringGraphTitle>
                 }>
                     <Graph
-                        modelName="number_of_tasks_in_channel_parse_deleted_or_never_existed_story_tasks"
+                        modelName="number_of_items_in_channel_parse_deleted_or_never_existed_story_tasks"
                     />
                 </ExpandableItem>
 
                 <ExpandableItem title={
-                    <BoringGraphTitle>number_of_tasks_in_channel_parse_all_communities_tasks</BoringGraphTitle>
+                    <BoringGraphTitle>number_of_items_in_channel_parse_all_communities_tasks</BoringGraphTitle>
                 }>
                     <Graph
-                        modelName="number_of_tasks_in_channel_parse_all_communities_tasks"
+                        modelName="number_of_items_in_channel_parse_all_communities_tasks"
+                    />
+                </ExpandableItem>
+
+                <ExpandableItem title={
+                    <BoringGraphTitle>number_of_items_in_channel_parser_results</BoringGraphTitle>
+                }>
+                    <Graph
+                        modelName="number_of_items_in_channel_parser_results"
                     />
                 </ExpandableItem>
             </div>
