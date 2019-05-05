@@ -10,11 +10,16 @@ import NiceLink from "./NiceLink";
 import timestampToString from "./date_utils";
 import axios from 'axios';
 import DoRequest from "./api";
+import {CopyToClipboard} from "react-copy-to-clipboard";
+import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
     avatar: {
         height: "40px",
     },
+    selectable: {
+        userSelect: "text",
+    }
 });
 
 class Users extends Component {
@@ -36,6 +41,24 @@ class Users extends Component {
         // this.fetchMore();
         this.requestCancelToken = null;
     }
+
+    getTextToCopy = () => {
+        let res = "";
+        for (const item of this.state.users) {
+            if (res.length === 0) {
+                for (const [propertyName,] of Object.entries(item)) {
+                    res += propertyName + "\t";
+                }
+                res += "\n";
+            }
+            for (const [, propertyVal] of Object.entries(item)) {
+                res += propertyVal + "\t";
+            }
+            res += "\n";
+        }
+
+        return res;
+    };
 
     createFilters() {
         console.log(this.state.searchParamsState);
@@ -158,6 +181,13 @@ class Users extends Component {
         return (
             <div>
                 {searchParams}
+
+                <CopyToClipboard
+                    text={this.getTextToCopy()}
+                    onCopy={console.log("copied succesfully")}>
+                    <Button>Скопировать в буфер обмена</Button>
+                </CopyToClipboard>
+
                 <InfiniteScroll
                     dataLength={this.state.users.length}
                     next={this.fetchMore}
@@ -185,11 +215,12 @@ class Users extends Component {
                                                     value.avatar_url :
                                                     "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png"
                                             } alt={"avatar"}/>
-                                            <ListItemText primary={value.username}/>
+                                            <ListItemText className={classes.selectable} primary={value.username}/>
                                             {this.state.searchParamsState.orderByFieldText[1] != null ?
                                                 <Row>
-                                                    <ListItemText>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
-                                                    <ListItemText>{
+                                                    <ListItemText
+                                                        className={classes.selectable}>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
+                                                    <ListItemText className={classes.selectable}>{
                                                         this.state.searchParamsState.orderByField === "signup_timestamp" ||
                                                         this.state.searchParamsState.orderByField === "ban_end_timestamp" ||
                                                         this.state.searchParamsState.orderByField === "added_timestamp" ||

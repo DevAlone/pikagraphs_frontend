@@ -2,12 +2,9 @@ import React, {Component} from 'react';
 import ListItem from "@material-ui/core/ListItem";
 import {withStyles} from "@material-ui/core/styles";
 import {Link} from "react-router-dom";
+import "./NiceListItem.css";
 
-const styles = theme => ({
-    root: {
-        textDecoration: "none",
-    },
-});
+const styles = theme => ({});
 
 function ListItemLink(props) {
     return <ListItem button {...props} />;
@@ -16,10 +13,8 @@ function ListItemLink(props) {
 class NiceListItem extends Component {
 
     render() {
-        const {classes} = this.props;
-
         return (
-            <Link to={this.props.href} className={classes.root}>
+            <Link to={this.props.href} className={"NiceListItem"} draggable={false}>
                 <ListItemLink>
                     {this.props.children}
                 </ListItemLink>

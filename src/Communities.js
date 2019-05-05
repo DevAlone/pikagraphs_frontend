@@ -10,6 +10,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import "./Communities.css";
 import NiceLink from "./NiceLink";
 import timestampToString from "./date_utils";
+import {CopyToClipboard} from "react-copy-to-clipboard";
+import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
     avatar: {
@@ -35,6 +37,24 @@ class Communities extends Component {
         this.limit = 64;
         // this.fetchMore();
     }
+
+    getTextToCopy = () => {
+        let res = "";
+        for (const item of this.state.items) {
+            if (res.length === 0) {
+                for (const [propertyName,] of Object.entries(item)) {
+                    res += propertyName + "\t";
+                }
+                res += "\n";
+            }
+            for (const [, propertyVal] of Object.entries(item)) {
+                res += propertyVal + "\t";
+            }
+            res += "\n";
+        }
+
+        return res;
+    };
 
     createFilters() {
         console.log(this.state.searchParamsState);
@@ -122,6 +142,13 @@ class Communities extends Component {
         return (
             <div>
                 {searchParams}
+
+                <CopyToClipboard
+                    text={this.getTextToCopy()}
+                    onCopy={console.log("copied succesfully")}>
+                    <Button>Скопировать в буфер обмена</Button>
+                </CopyToClipboard>
+
                 <InfiniteScroll
                     dataLength={this.state.items.length}
                     next={this.fetchMore}
