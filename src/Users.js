@@ -1,17 +1,12 @@
 import React, {Component} from 'react';
-import List from "@material-ui/core/List";
 import BeautifulListItem from "./NiceListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Row from "./Row";
-import SearchParams from "./SearchParams";
-import InfiniteScroll from "react-infinite-scroll-component";
 import NiceLink from "./NiceLink";
 import timestampToString from "./date_utils";
-import axios from 'axios';
-import DoRequest from "./api";
-import {CopyToClipboard} from "react-copy-to-clipboard";
-import Button from "@material-ui/core/Button";
+import Feed from "./Feed";
+import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
     avatar: {
@@ -25,232 +20,112 @@ const styles = theme => ({
 class Users extends Component {
     constructor(props) {
         super(props);
+        this.orderByFields = {
+            "rating": ["Рейтингу", "Рейтинг"],
+            "number_of_subscribers": ["Количеству подписчиков", "Подписчиков"],
+            "number_of_comments": ["Количеству комментариев", "Комментариев"],
+            "number_of_stories": ["Количеству постов", "Постов"],
+            "number_of_hot_stories": ["Количеству горячих постов", "Горячих постов"],
+            "number_of_pluses": ["Количеству плюсов", "Плюсов"],
+            "number_of_minuses": ["Количеству минусов", "Минусов"],
+            "pikabu_id": ["ID на Пикабу", "ID на Пикабу"],
+            "username": ["Никнейму", null],
+            "signup_timestamp": ["Дате регистрации", "Дата регистрации"],
+            "approved_text": ["Подтверждён", ""],
+            "ban_end_timestamp": ["Дате окончания бана", "Дата окончания бана"],
+            "added_timestamp": ["Дате добавления в pikagraphs", "Дата добавления в pikagraphs"],
+            "last_update_timestamp": ["Последнему времени обновления", "Последнее время обновления"],
+            "next_update_timestamp": ["Следующему времени обновления", "Следующее время обновления"],
+        }
+        this.filterByFields = {
+            "pikabu_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
 
-        this.fetchMore = this.fetchMore.bind(this);
+            "gender": ["Полу(0, 1 или 2)", ["==", "!="], "text"],
 
+            "rating": ["Рейтингу", [">=", "<=", "==", "!="], "number"],
+            "number_of_comments": ["Количеству комментариев", [">=", "<=", "==", "!="], "number"],
+            "number_of_subscribers": ["Количеству подписчиков", [">=", "<=", "==", "!="], "number"],
+            "number_of_stories": ["Количеству постов", [">=", "<=", "==", "!="], "number"],
+            "number_of_hot_stories": ["Количеству горячих постов", [">=", "<=", "==", "!="], "number"],
+            "number_of_pluses": ["Количеству плюсов", [">=", "<=", "==", "!="], "number"],
+            "number_of_minuses": ["Количеству минусов", [">=", "<=", "==", "!="], "number"],
 
-        this.state = {
-            users: [],
-            hasMoreItems: true,
-            searchParamsState: {
-                orderByField: "rating",
-            },
+            "signup_timestamp": ["Дате регистрации(timestamp)", [">=", "<=", "==", "!="], "number"],
+            "ban_end_timestamp": ["Дате окончания бана(timestamp)", [">=", "<=", "==", "!="], "number"],
+            "added_timestamp": ["Дате добавления в pikastat", [">=", "<=", "==", "!="], "number"],
+            "last_update_timestamp": ["Дате последнего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
+            "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
+
+            "is_rating_hidden": ["Рейтинг скрыт", ["=="], "boolean"],
+            "is_banned": ["Забанен", ["=="], "boolean"],
+            "is_permanently_banned": ["Постоянно забанен", ["=="], "boolean"],
+            "is_deleted": ["Удалён", ["=="], "boolean"],
+            // "approved_text": ["", [], ""],
+            // "award_ids": ["", [], ""],
+            // "community_ids": ["", [], ""],
+            // "ban_history_item_ids": ["", [], ""],
         };
-        this.offset = 0;
-        this.limit = 64;
-        // this.fetchMore();
-        this.requestCancelToken = null;
-    }
-
-    getTextToCopy = () => {
-        let res = "";
-        for (const item of this.state.users) {
-            if (res.length === 0) {
-                for (const [propertyName,] of Object.entries(item)) {
-                    res += propertyName + "\t";
-                }
-                res += "\n";
-            }
-            for (const [, propertyVal] of Object.entries(item)) {
-                res += propertyVal + "\t";
-            }
-            res += "\n";
-        }
-
-        return res;
-    };
-
-    createFilters() {
-        console.log(this.state.searchParamsState);
-        const filtersString = this.state.searchParamsState.filterFields.filter(filter => {
-            return filter[2].length > 0;
-        }).map(filter => {
-            return filter.join(" ");
-        }).join(" && ");
-        console.log("filters string is '" + filtersString + "'");
-        console.log(filtersString);
-        return filtersString
-    }
-
-    fetchMore(page) {
-        let filter = "";
-        if (this.state.searchParamsState.searchText.length > 0) {
-            filter += 'ilike(username, "%' + this.state.searchParamsState.searchText + '%")';
-        }
-        const filtersString = this.createFilters();
-        if (filtersString.length > 0) {
-            if (filter.length > 0) {
-                filter += " && ";
-            }
-            filter += filtersString;
-        }
-
-        if (this.requestCancelToken) {
-            this.requestCancelToken.cancel();
-        }
-        this.requestCancelToken = axios.CancelToken.source();
-
-        DoRequest('list_model', {
-            name: 'pikabu_user',
-            limit: this.limit,
-            offset: this.offset,
-            order_by_fields: this.state.searchParamsState != null ?
-                (this.state.searchParamsState.reversedOrder ?
-                    '-' : '') + this.state.searchParamsState.orderByField
-                : null,
-            filter: filter,
-        }, this.requestCancelToken.token).then(response => {
-            this.offset += this.limit;
-            response = response.data;
-            if (response.results != null) {
-                this.setState(prevState => {
-                    return {
-                        users: prevState.users.concat(response.results),
-                    };
-                });
-            } else {
-                this.setState({
-                    hasMoreItems: false,
-                });
-            }
-        });
-    }
-
-    searchParamsStateChanged(state) {
-        this.setState(() => {
-            this.offset = 0;
-            return {
-                users: [],
-                hasMoreItems: true,
-                searchParamsState: state,
-            };
-        }, this.fetchMore);
     }
 
     render() {
-        const {classes} = this.props;
-        const searchParams = <SearchParams
-            orderByFields={{
-                "rating": ["Рейтингу", "Рейтинг"],
-                "number_of_subscribers": ["Количеству подписчиков", "Подписчиков"],
-                "number_of_comments": ["Количеству комментариев", "Комментариев"],
-                "number_of_stories": ["Количеству постов", "Постов"],
-                "number_of_hot_stories": ["Количеству горячих постов", "Горячих постов"],
-                "number_of_pluses": ["Количеству плюсов", "Плюсов"],
-                "number_of_minuses": ["Количеству минусов", "Минусов"],
-                "pikabu_id": ["ID на Пикабу", "ID на Пикабу"],
-                "username": ["Никнейму", null],
-                "signup_timestamp": ["Дате регистрации", "Дата регистрации"],
-                "approved_text": ["Подтверждён", ""],
-                "ban_end_timestamp": ["Дате окончания бана", "Дата окончания бана"],
-                "added_timestamp": ["Дате добавления в pikagraphs", "Дата добавления в pikagraphs"],
-                "last_update_timestamp": ["Последнему времени обновления", "Последнее время обновления"],
-                "next_update_timestamp": ["Следующему времени обновления", "Следующее время обновления"],
-            }}
-            filterByFields={{
-                "pikabu_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
-
-                "gender": ["Полу(0, 1 или 2)", ["==", "!="], "text"],
-
-                "rating": ["Рейтингу", [">=", "<=", "==", "!="], "number"],
-                "number_of_comments": ["Количеству комментариев", [">=", "<=", "==", "!="], "number"],
-                "number_of_subscribers": ["Количеству подписчиков", [">=", "<=", "==", "!="], "number"],
-                "number_of_stories": ["Количеству постов", [">=", "<=", "==", "!="], "number"],
-                "number_of_hot_stories": ["Количеству горячих постов", [">=", "<=", "==", "!="], "number"],
-                "number_of_pluses": ["Количеству плюсов", [">=", "<=", "==", "!="], "number"],
-                "number_of_minuses": ["Количеству минусов", [">=", "<=", "==", "!="], "number"],
-
-                "signup_timestamp": ["Дате регистрации(timestamp)", [">=", "<=", "==", "!="], "number"],
-                "ban_end_timestamp": ["Дате окончания бана(timestamp)", [">=", "<=", "==", "!="], "number"],
-                "added_timestamp": ["Дате добавления в pikastat", [">=", "<=", "==", "!="], "number"],
-                "last_update_timestamp": ["Дате последнего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
-                "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
-
-                "is_rating_hidden": ["Рейтинг скрыт", ["=="], "boolean"],
-                "is_banned": ["Забанен", ["=="], "boolean"],
-                "is_permanently_banned": ["Постоянно забанен", ["=="], "boolean"],
-                "is_deleted": ["Удалён", ["=="], "boolean"],
-                // "approved_text": ["", [], ""],
-                // "award_ids": ["", [], ""],
-                // "community_ids": ["", [], ""],
-                // "ban_history_item_ids": ["", [], ""],
-            }}
-            onStateChanged={this.searchParamsStateChanged.bind(this)}
+        return <Feed
+            modelName="pikabu_user"
+            searchFieldName={"username"}
+            orderByFields={this.orderByFields}
+            filterByFields={this.filterByFields}
+            itemRenderer={this.renderItem}
         />;
-
-        return (
-            <div>
-                {searchParams}
-
-                <CopyToClipboard
-                    text={this.getTextToCopy()}
-                    onCopy={console.log("copied succesfully")}>
-                    <Button>Скопировать в буфер обмена</Button>
-                </CopyToClipboard>
-
-                <InfiniteScroll
-                    dataLength={this.state.users.length}
-                    next={this.fetchMore}
-                    hasMore={this.state.hasMoreItems}
-                    loader={<h1>Загрузка...</h1>}
-                    endMessage={
-                        <p style={{textAlign: 'center'}}>
-                            Это всё ¯\_(ツ)_/¯
-                        </p>
-                    }
-                    scrollableTarget={"appContent"}
-                >
-                    <List>
-                        {this.state.users.map((value, index) => {
-                            return (
-                                <Row
-                                    key={index}
-                                >
-                                    <div className="userLink">
-                                        <BeautifulListItem
-                                            href={"/user/pikabu_id==" + value.pikabu_id}
-                                        >
-                                            <img className={classes.avatar} src={
-                                                value.avatar_url.length > 0 ?
-                                                    value.avatar_url :
-                                                    "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png"
-                                            } alt={"avatar"}/>
-                                            <ListItemText className={classes.selectable} primary={value.username}/>
-                                            {this.state.searchParamsState.orderByFieldText[1] != null ?
-                                                <Row>
-                                                    <ListItemText
-                                                        className={classes.selectable}>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
-                                                    <ListItemText className={classes.selectable}>{
-                                                        this.state.searchParamsState.orderByField === "signup_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "ban_end_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "added_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "last_update_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "next_update_timestamp" ?
-                                                            timestampToString(value[this.state.searchParamsState.orderByField]) :
-                                                            value[this.state.searchParamsState.orderByField]
-                                                    }</ListItemText>
-                                                </Row>
-                                                : null
-                                            }
-                                        </BeautifulListItem>
-                                    </div>
-                                    <NiceLink
-                                        href={"https://pikabu.ru/@" + value.username}
-                                        target="_blank"
-                                        title={"Показать на Пикабу"}>
-                                        <img
-                                            className="showOnPikabuImg"
-                                            src={"https://s.pikabu.ru/favicon.ico"}
-                                            alt={"Показать на Пикабу"}/>
-                                    </NiceLink>
-                                </Row>
-                            );
-                        })}
-                    </List>
-                </InfiniteScroll>
-            </div>
-        );
     }
+
+    renderItem = (user, parent) => {
+        const {classes} = this.props;
+        return (
+            <Grid
+                container
+                direction="row"
+                justify="space-evenly"
+                alignItems="center"
+            >
+                <div className="userLink">
+                    <BeautifulListItem
+                        href={"/user/pikabu_id==" + user.pikabu_id}
+                    >
+                        <img className={classes.avatar} src={
+                            user.avatar_url.length > 0 ?
+                                user.avatar_url :
+                                "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png"
+                        } alt={"avatar"}/>
+                        <ListItemText className={classes.selectable} primary={user.username}/>
+                        {parent.state.searchParamsState.orderByFieldText[1] != null ?
+                            <Row>
+                                <ListItemText
+                                    className={classes.selectable}>{parent.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
+                                <ListItemText className={classes.selectable}>{
+                                    parent.state.searchParamsState.orderByField === "signup_timestamp" ||
+                                    parent.state.searchParamsState.orderByField === "ban_end_timestamp" ||
+                                    parent.state.searchParamsState.orderByField === "added_timestamp" ||
+                                    parent.state.searchParamsState.orderByField === "last_update_timestamp" ||
+                                    parent.state.searchParamsState.orderByField === "next_update_timestamp" ?
+                                        timestampToString(user[parent.state.searchParamsState.orderByField]) :
+                                        user[parent.state.searchParamsState.orderByField]
+                                }</ListItemText>
+                            </Row>
+                            : null
+                        }
+                    </BeautifulListItem>
+                </div>
+                <NiceLink
+                    href={"https://pikabu.ru/@" + user.username}
+                    target="_blank"
+                    title={"Показать на Пикабу"}>
+                    <img
+                        className="showOnPikabuImg"
+                        src={"https://s.pikabu.ru/favicon.ico"}
+                        alt={"Показать на Пикабу"}/>
+                </NiceLink>
+            </Grid>
+        );
+    };
 }
 
 export default withStyles(styles)(Users);

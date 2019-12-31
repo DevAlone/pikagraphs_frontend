@@ -11,6 +11,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import ForumIcon from '@material-ui/icons/Forum';
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -164,7 +165,7 @@ class App extends React.Component {
 
                 <ListItem button component={Link} to={"/stories"}>
                     <ListItemIcon>
-                        <BarChartIcon/>
+                        <ForumIcon/>
                     </ListItemIcon>
                     <ListItemText primary="Посты"/>
                 </ListItem>

@@ -1,259 +1,170 @@
 import React, {Component} from 'react';
-import List from "@material-ui/core/List";
 import BeautifulListItem from "./NiceListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import withStyles from "@material-ui/core/styles/withStyles";
-import Row from "./Row";
-import SearchParams from "./SearchParams";
-import InfiniteScroll from "react-infinite-scroll-component";
 import NiceLink from "./NiceLink";
 import timestampToString from "./date_utils";
-import axios from 'axios';
-import DoRequest from "./api";
-import {CopyToClipboard} from "react-copy-to-clipboard";
-import Button from "@material-ui/core/Button";
+import Feed from "./Feed";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = theme => ({
-    avatar: {
-        height: "40px",
+    container: {
+        width: "100%",
     },
-    selectable: {
+    avatar: {
+        height: "18px",
+        paddingRight: 5,
+    },
+    title: {
         userSelect: "text",
-    }
+        flexGrow: 1,
+    },
+    header: {
+        width: "100%",
+    },
+    username: {
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    nowrapContainer: {
+        "& *": {
+            marginRight: 0,
+            marginLeft: 5,
+            paddingRight: 0,
+            paddingLeft: 0,
+        },
+    },
 });
 
 class Stories extends Component {
     constructor(props) {
         super(props);
-
-        this.fetchMore = this.fetchMore.bind(this);
-
-
-        this.state = {
-            items: [],
-            hasMoreItems: true,
-            searchParamsState: {
-                orderByField: "rating",
-            },
+        this.orderByFields = {
+            "rating": ["Рейтингу", "Рейтинг"],
+            // TODO: "title": ["Заголовку", null],?
+            // TODO: "story_url": ["", null],?
+            "number_of_comments": ["Количеству комментариев", "Комментариев"],
+            "number_of_pluses": ["Количеству плюсов", "Плюсов"],
+            "number_of_minuses": ["Количеству минусов", "Минусов"],
+            "pikabu_id": ["ID на Пикабу", "ID на Пикабу"],
+            "author_id": ["ID автора", "ID автора"],
+            // TODO: "author_username": ["Никнейм автора", "Никнейм автора"],?
+            // TODO: "community_link": ["", ""],?
+            "community_id": ["ID сообщества", "ID сообщества"],
+            "created_at_timestamp": ["Дате создания", "Дата создания"],
+            "added_timestamp": ["Дате добавления в pikagraphs", "Дата добавления в pikagraphs"],
+            "last_update_timestamp": ["Последнему времени обновления", "Последнее время обновления"],
+            "next_update_timestamp": ["Следующему времени обновления", "Следующее время обновления"],
         };
-        this.offset = 0;
-        this.limit = 64;
-        // this.fetchMore();
-        this.requestCancelToken = null;
-    }
+        this.filterByFields = {
+            "pikabu_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
+            "author_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
+            "community_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
 
-    getTextToCopy = () => {
-        let res = "";
-        for (const item of this.state.items) {
-            if (res.length === 0) {
-                for (const [propertyName,] of Object.entries(item)) {
-                    res += propertyName + "\t";
-                }
-                res += "\n";
-            }
-            for (const [, propertyVal] of Object.entries(item)) {
-                res += propertyVal + "\t";
-            }
-            res += "\n";
-        }
-
-        return res;
-    };
-
-    createFilters() {
-        console.log(this.state.searchParamsState);
-        const filtersString = this.state.searchParamsState.filterFields.filter(filter => {
-            return filter[2].length > 0;
-        }).map(filter => {
-            return filter.join(" ");
-        }).join(" && ");
-        console.log("filters string is '" + filtersString + "'");
-        console.log(filtersString);
-        return filtersString
-    }
-
-    fetchMore(page) {
-        let filter = "";
-        /*if (this.state.searchParamsState.searchText.length > 0) {
-            filter += 'ilike(username, "%' + this.state.searchParamsState.searchText + '%")';
-        }*/
-        const filtersString = this.createFilters();
-        if (filtersString.length > 0) {
-            if (filter.length > 0) {
-                filter += " && ";
-            }
-            filter += filtersString;
-        }
-
-        if (this.requestCancelToken) {
-            this.requestCancelToken.cancel();
-        }
-        this.requestCancelToken = axios.CancelToken.source();
-
-        DoRequest('list_model', {
-            name: 'pikabu_story',
-            limit: this.limit,
-            offset: this.offset,
-            order_by_fields: this.state.searchParamsState != null ?
-                (this.state.searchParamsState.reversedOrder ?
-                    '-' : '') + this.state.searchParamsState.orderByField
-                : null,
-            filter: filter,
-        }, this.requestCancelToken.token).then(response => {
-            this.offset += this.limit;
-            if (typeof response === "undefined") {
-                console.log("some shit happened");
-                return;
-            }
-            response = response.data;
-            if (response.results != null) {
-                this.setState(prevState => {
-                    return {
-                        items: prevState.items.concat(response.results),
-                    };
-                });
-            } else {
-                this.setState({
-                    hasMoreItems: false,
-                });
-            }
-        });
-    }
-
-    searchParamsStateChanged(state) {
-        this.setState(() => {
-            this.offset = 0;
-            return {
-                items: [],
-                hasMoreItems: true,
-                searchParamsState: state,
-            };
-        }, this.fetchMore);
+            "rating": ["Рейтингу", [">=", "<=", "==", "!="], "number"],
+            "number_of_pluses": ["Количеству плюсов", [">=", "<=", "==", "!="], "number"],
+            "number_of_minuses": ["Количеству минусов", [">=", "<=", "==", "!="], "number"],
+            // TODO: "content_blocks"?
+            "created_at_timestamp": ["Дате создания(timestamp)", [">=", "<=", "==", "!="], "number"],
+            // TODO: "story_url"?
+            // TODO: "tags"?
+            "number_of_comments": ["Количеству комментариев", [">=", "<=", "==", "!="], "number"],
+            "is_deleted": ["Удалён", ["=="], "boolean"],
+            "is_rating_hidden": ["Рейтинг скрыт", ["=="], "boolean"],
+            "has_mine_tag": ["Есть тег \"моё\"", ["=="], "boolean"],
+            "has_adult_tag": ["Есть тег \"NSFW\"", ["=="], "boolean"],
+            "is_longpost": ["Длиннопост", ["=="], "boolean"],
+            // TODO: add like operator
+            "author_username": ["Никнейм автора(полностью)", ["==", "!="], "text"],
+            "community_link": ["Сокращённое название сообщества(полностью)", ["==", "!="], "text"],
+            // TODO: "community_name": ["Название сообщества(полностью)", ["==", "!="], "text"],
+            "comments_are_hot": ["С горячими комментариями", ["=="], "boolean"],
+            "added_timestamp": ["Дате добавления в pikastat", [">=", "<=", "==", "!="], "number"],
+            "last_update_timestamp": ["Дате последнего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
+            "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
+            "is_permanently_banned": ["Полностью удалён", ["=="], "boolean"],
+        };
     }
 
     render() {
-        const {classes} = this.props;
-        const searchParams = <SearchParams
-            orderByFields={{
-                "rating": ["Рейтингу", "Рейтинг"],
-                /*"number_of_subscribers": ["Количеству подписчиков", "Подписчиков"],
-                "number_of_comments": ["Количеству комментариев", "Комментариев"],
-                "number_of_stories": ["Количеству постов", "Постов"],
-                "number_of_hot_stories": ["Количеству горячих постов", "Горячих постов"],
-                "number_of_pluses": ["Количеству плюсов", "Плюсов"],
-                "number_of_minuses": ["Количеству минусов", "Минусов"],
-                "pikabu_id": ["ID на Пикабу", "ID на Пикабу"],
-                "username": ["Никнейму", null],
-                "signup_timestamp": ["Дате регистрации", "Дата регистрации"],
-                "approved_text": ["Подтверждён", ""],
-                "ban_end_timestamp": ["Дате окончания бана", "Дата окончания бана"],
-                "added_timestamp": ["Дате добавления в pikagraphs", "Дата добавления в pikagraphs"],
-                "last_update_timestamp": ["Последнему времени обновления", "Последнее время обновления"],
-                "next_update_timestamp": ["Следующему времени обновления", "Следующее время обновления"],*/
-            }}
-            filterByFields={{
-                "pikabu_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
-
-                /*"gender": ["Полу(0, 1 или 2)", ["==", "!="], "text"],
-
-                "rating": ["Рейтингу", [">=", "<=", "==", "!="], "number"],
-                "number_of_comments": ["Количеству комментариев", [">=", "<=", "==", "!="], "number"],
-                "number_of_subscribers": ["Количеству подписчиков", [">=", "<=", "==", "!="], "number"],
-                "number_of_stories": ["Количеству постов", [">=", "<=", "==", "!="], "number"],
-                "number_of_hot_stories": ["Количеству горячих постов", [">=", "<=", "==", "!="], "number"],
-                "number_of_pluses": ["Количеству плюсов", [">=", "<=", "==", "!="], "number"],
-                "number_of_minuses": ["Количеству минусов", [">=", "<=", "==", "!="], "number"],
-
-                "signup_timestamp": ["Дате регистрации(timestamp)", [">=", "<=", "==", "!="], "number"],
-                "ban_end_timestamp": ["Дате окончания бана(timestamp)", [">=", "<=", "==", "!="], "number"],
-                "added_timestamp": ["Дате добавления в pikastat", [">=", "<=", "==", "!="], "number"],
-                "last_update_timestamp": ["Дате последнего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
-                "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
-
-                "is_rating_hidden": ["Рейтинг скрыт", ["=="], "boolean"],
-                "is_banned": ["Забанен", ["=="], "boolean"],
-                "is_permanently_banned": ["Постоянно забанен", ["=="], "boolean"],
-                "is_deleted": ["Удалён", ["=="], "boolean"],
-                // "approved_text": ["", [], ""],
-                // "award_ids": ["", [], ""],
-                // "community_ids": ["", [], ""],
-                // "ban_history_item_ids": ["", [], ""],
-                 */
-            }}
-            onStateChanged={this.searchParamsStateChanged.bind(this)}
+        return <Feed
+            modelName={"pikabu_story"}
+            searchFieldName={"title"}
+            orderByFields={this.orderByFields}
+            filterByFields={this.filterByFields}
+            itemRenderer={(item, parent) => this.renderItem(item, parent)}
         />;
+    }
+
+    renderItem(item, parent) {
+        const {classes} = this.props;
 
         return (
-            <div>
-                {searchParams}
-
-                <CopyToClipboard
-                    text={this.getTextToCopy()}
-                    onCopy={console.log("copied succesfully")}>
-                    <Button>Скопировать в буфер обмена</Button>
-                </CopyToClipboard>
-
-                <InfiniteScroll
-                    dataLength={this.state.items.length}
-                    next={this.fetchMore}
-                    hasMore={this.state.hasMoreItems}
-                    loader={<h1>Загрузка...</h1>}
-                    endMessage={
-                        <p style={{textAlign: 'center'}}>
-                            Это всё ¯\_(ツ)_/¯
-                        </p>
-                    }
-                    scrollableTarget={"appContent"}
+            <div className={classes.container}>
+                <Grid
+                    container
+                    wrap={"nowrap"}
+                    spacing={2}
+                    className={classes.header}
+                    alignItems="center"
                 >
-                    <List>
-                        {this.state.items.map((value, index) => {
-                            return (
-                                <Row
-                                    key={value.pikabu_id}
-                                >
-                                    <div className="itemLink">
-                                        <BeautifulListItem
-                                            href={"/story/pikabu_id==" + value.pikabu_id}
-                                        >
-                                            {/*<img className={classes.avatar} src={*/}
-                                            {/*    value.avatar_url.length > 0 ?*/}
-                                            {/*        value.avatar_url :*/}
-                                            {/*        "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png"*/}
-                                            {/*} alt={"avatar"}/>*/}
+                    <Grid item xs className={classes.headerLink}>
+                        <BeautifulListItem href={"/story/pikabu_id==" + item.pikabu_id}>
+                            <ListItemText className={classes.title} primary={item.title}/>
 
-                                            <ListItemText className={classes.selectable} primary={value.title}/>
-                                            {this.state.searchParamsState.orderByFieldText[1] != null ?
-                                                <Row>
-                                                    <ListItemText
-                                                        className={classes.selectable}>{this.state.searchParamsState.orderByFieldText[1]}: </ListItemText>
-                                                    <ListItemText className={classes.selectable}>{
-                                                        this.state.searchParamsState.orderByField === "signup_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "ban_end_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "added_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "last_update_timestamp" ||
-                                                        this.state.searchParamsState.orderByField === "next_update_timestamp" ?
-                                                            timestampToString(value[this.state.searchParamsState.orderByField]) :
-                                                            value[this.state.searchParamsState.orderByField]
-                                                    }</ListItemText>
-                                                </Row>
-                                                : null
-                                            }
-                                        </BeautifulListItem>
-                                    </div>
-                                    <NiceLink
-                                        href={"https://pikabu.ru/story/_" + value.pikabu_id}
-                                        target="_blank"
-                                        title={"Показать на Пикабу"}>
-                                        <img
-                                            className="showOnPikabuImg"
-                                            src={"https://s.pikabu.ru/favicon.ico"}
-                                            alt={"Показать на Пикабу"}/>
-                                    </NiceLink>
-                                </Row>
-                            );
-                        })}
-                    </List>
-                </InfiniteScroll>
+                            <Grid
+                                item
+                            >
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="flex-end"
+                                    alignItems="center"
+                                    wrap={"nowrap"}
+                                    className={classes.nowrapContainer}
+                                >
+                                    <Typography className={classes.username}>@{item.author_username}</Typography>
+
+                                    <img className={classes.avatar} src={
+                                        item.author_avatar_url.length > 0 ?
+                                            item.author_avatar_url :
+                                            "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png"
+                                    } alt={"avatar"}/>
+
+                                    {parent.state.searchParamsState.orderByFieldText[1] != null ?
+                                        [
+                                            <ListItemText className={classes.selectable}>
+                                                {parent.state.searchParamsState.orderByFieldText[1]}:
+                                            </ListItemText>,
+                                            <ListItemText className={classes.selectable}>{
+                                                parent.state.searchParamsState.orderByField === "signup_timestamp" ||
+                                                parent.state.searchParamsState.orderByField === "ban_end_timestamp" ||
+                                                parent.state.searchParamsState.orderByField === "added_timestamp" ||
+                                                parent.state.searchParamsState.orderByField === "last_update_timestamp" ||
+                                                parent.state.searchParamsState.orderByField === "next_update_timestamp" ?
+                                                    timestampToString(item[parent.state.searchParamsState.orderByField]) :
+                                                    item[parent.state.searchParamsState.orderByField]
+                                            }</ListItemText>
+                                        ]
+                                        : null
+                                    }
+                                </Grid>
+                            </Grid>
+                        </BeautifulListItem>
+                    </Grid>
+                    <Grid item>
+                        <NiceLink
+                            href={"https://pikabu.ru/story/_" + item.pikabu_id}
+                            target="_blank"
+                            title={"Показать на Пикабу"}>
+                            <img
+                                className="showOnPikabuImg"
+                                src={"https://s.pikabu.ru/favicon.ico"}
+                                alt={"Показать на Пикабу"}/>
+                        </NiceLink>
+                    </Grid>
+                </Grid>
             </div>
         );
     }
