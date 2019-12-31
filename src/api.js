@@ -11,7 +11,13 @@ class API extends Component {
             error => {
                 console.log(error.response)
                 // this.props.alert.show(error.response.error_message);
-                alert(error.response.data.error_message);
+
+                // alert(JSON.stringify(error));
+                if (typeof error.response !== "undefined") {
+                    alert(error.response.data.error_message);
+                } else {
+                    alert("something very bad happened");
+                }
             }
         );
     }

@@ -111,6 +111,10 @@ class Graph extends Component {
             "limit": limit,
         }).then(response => {
             let data = [];
+            if (typeof response === "undefined") {
+                console.log("reponse is undefined!");
+                return;
+            }
             for (let i in response.data.results) {
                 var item = response.data.results[i];
                 data.push({

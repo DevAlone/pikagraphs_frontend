@@ -29,6 +29,7 @@ import Donate from "./Donate";
 import Communities from "./Communities";
 import Community from "./Community";
 import BoringGraphs from "./BoringGraphs";
+import Stories from "./Stories";
 
 const drawerWidth = 240;
 
@@ -161,6 +162,13 @@ class App extends React.Component {
                     <ListItemText primary="Сообщества"/>
                 </ListItem>
 
+                <ListItem button component={Link} to={"/stories"}>
+                    <ListItemIcon>
+                        <BarChartIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Посты"/>
+                </ListItem>
+
                 <ListItem button component={Link} to={"/about"}>
                     <ListItemIcon>
                         <Icon>
@@ -226,6 +234,7 @@ class App extends React.Component {
                             <Route path={"/user/:id"} component={User}/>
                             <Route path={"/communities"} component={Communities}/>
                             <Route path={"/community/:id"} component={Community}/>
+                            <Route path={"/stories"} component={Stories}/>
                             <Route path={"/about"} component={About}/>
                             <Route path={"/donate"} component={Donate}/>
                             <Route path={"/boring"} component={BoringGraphs}/>

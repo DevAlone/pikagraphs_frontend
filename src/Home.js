@@ -33,6 +33,24 @@ class Home extends Component {
                         defaultTimestampFilter={"lastYear"}
                     />
                 </Block>
+
+                <h2>Распределение постов по дате создания</h2>
+                <Block>
+                    <Graph
+                        modelName="pikabu_story_created_at_timestamp_distribution_86400"
+                        defaultTimestampFilter={"lastYear"}
+                    />
+                </Block>
+
+                <h2>Распределение комментариев по дате создания</h2>
+                <Block>
+                    <Graph
+                        modelName="pikabu_comment_created_at_timestamp_distribution_86400"
+                        defaultTimestampFilter={"lastYear"}
+                    />
+                </Block>
+
+                {/*    TODO: Ban items? */}
             </div>
         );
     }
