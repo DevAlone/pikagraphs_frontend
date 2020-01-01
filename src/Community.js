@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Row from "./Row";
-import "./User.css";
+import "./dataTable.css";
 import DoRequest from "./api";
 import NiceLink from "./NiceLink";
 import Block from "./Block";
@@ -74,27 +74,27 @@ class Community extends Component {
                 <ItemDataTable rows={tableRows} itemData={this.state.data} modelName={"pikabu_community"}/>
 
                 <Block>
-                    <div className={"userDataTableRow"}>
-                            <span className={"userDataTableCell userDataTableCellLeft"}>
+                    <div className={"dataTableRow"}>
+                            <span className={"dataTableCell dataTableCellLeft"}>
                                 ID на Пикабу
                             </span>
-                        <span className={"userDataTableCell userDataTableCellRight"}>
+                        <span className={"dataTableCell dataTableCellRight"}>
                                 {this.state.data.pikabu_id}
                             </span>
                     </div>
-                    <div className={"userDataTableRow"}>
-                            <span className={"userDataTableCell userDataTableCellLeft"}>
+                    <div className={"dataTableRow"}>
+                            <span className={"dataTableCell dataTableCellLeft"}>
                                 Добавлен в pikagraphs
                             </span>
-                        <span className={"userDataTableCell userDataTableCellRight"}>
+                        <span className={"dataTableCell dataTableCellRight"}>
                                 {timestampToString(this.state.data.added_timestamp)}
                             </span>
                     </div>
-                    <div className={"userDataTableRow"}>
-                            <span className={"userDataTableCell userDataTableCellLeft"}>
+                    <div className={"dataTableRow"}>
+                            <span className={"dataTableCell dataTableCellLeft"}>
                                 Дата последнего обновления
                             </span>
-                        <span className={"userDataTableCell userDataTableCellRight"}>
+                        <span className={"dataTableCell dataTableCellRight"}>
                                 {timestampToString(this.state.data.last_update_timestamp)}
                         </span>
                     </div>

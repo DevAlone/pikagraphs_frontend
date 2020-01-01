@@ -11,40 +11,6 @@
     font-size: 22px;
 }
 
-.userDataTable {
-    margin: 10px 0;
-}
-
-.userDataTableRow {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-    align-content: center;
-    padding-bottom: 6px;
-}
-
-.userDataTableRow:hover {
-    border-bottom: 1px solid #aaa;
-    padding-bottom: 5px;
-}
-
-.userDataTableCell {
-
-}
-
-.userDataTableCell img {
-    height: 30px;
-}
-
-.userDataTableCellLeft {
-}
-
-.userDataTableCellRight {
-}
-
 .sidebar * {
     color: #fff !important;
 }

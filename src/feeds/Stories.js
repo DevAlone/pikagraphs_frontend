@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import BeautifulListItem from "./NiceListItem";
+import BeautifulListItem from "../NiceListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import NiceLink from "./NiceLink";
-import timestampToString from "./date_utils";
+import NiceLink from "../NiceLink";
+import timestampToString from "../date_utils";
 import Feed from "./Feed";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -133,20 +133,19 @@ class Stories extends Component {
                                     } alt={"avatar"}/>
 
                                     {parent.state.searchParamsState.orderByFieldText[1] != null ?
-                                        [
-                                            <ListItemText className={classes.selectable}>
-                                                {parent.state.searchParamsState.orderByFieldText[1]}:
-                                            </ListItemText>,
-                                            <ListItemText className={classes.selectable}>{
-                                                parent.state.searchParamsState.orderByField === "signup_timestamp" ||
-                                                parent.state.searchParamsState.orderByField === "ban_end_timestamp" ||
+                                        (
+                                            <ListItemText
+                                                className={classes.selectable}
+                                                title={parent.state.searchParamsState.orderByFieldText[1]}
+                                            >{
+                                                parent.state.searchParamsState.orderByField === "created_at_timestamp" ||
                                                 parent.state.searchParamsState.orderByField === "added_timestamp" ||
                                                 parent.state.searchParamsState.orderByField === "last_update_timestamp" ||
                                                 parent.state.searchParamsState.orderByField === "next_update_timestamp" ?
                                                     timestampToString(item[parent.state.searchParamsState.orderByField]) :
                                                     item[parent.state.searchParamsState.orderByField]
                                             }</ListItemText>
-                                        ]
+                                        )
                                         : null
                                     }
                                 </Grid>

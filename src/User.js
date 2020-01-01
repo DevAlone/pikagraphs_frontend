@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Row from "./Row";
+import "./dataTable.css";
 import "./User.css";
 import DoRequest from "./api";
 import NiceLink from "./NiceLink";
@@ -8,7 +9,7 @@ import timestampToString from "./date_utils";
 import ItemDataTable from "./ItemDataTable";
 import Block from "./Block";
 
-const styles = theme => ({});
+const styles = () => ({});
 
 class User extends Component {
     constructor(props) {
@@ -106,29 +107,29 @@ class User extends Component {
                 </Row>
                 <ItemDataTable rows={tableRows} itemData={this.state.user} modelName={"pikabu_user"}/>
                 <Block>
-                    <div className={"userDataTableRow"}>
-                        <span className={"userDataTableCell userDataTableCellLeft"}>ID на Пикабу </span>
+                    <div className={"dataTableRow"}>
+                        <span className={"dataTableCell dataTableCellLeft"}>ID на Пикабу </span>
                         <span
-                            className={"userDataTableCell userDataTableCellRight"}>{this.state.user.pikabu_id}</span>
+                            className={"dataTableCell dataTableCellRight"}>{this.state.user.pikabu_id}</span>
                     </div>
-                    <div className={"userDataTableRow"}>
-                        <span className={"userDataTableCell userDataTableCellLeft"}>Добавлен в pikagraphs </span>
+                    <div className={"dataTableRow"}>
+                        <span className={"dataTableCell dataTableCellLeft"}>Добавлен в pikagraphs </span>
                         <span
-                            className={"userDataTableCell userDataTableCellRight"}>
+                            className={"dataTableCell dataTableCellRight"}>
                                 {timestampToString(this.state.user.added_timestamp)}
                             </span>
                     </div>
-                    <div className={"userDataTableRow"}>
+                    <div className={"dataTableRow"}>
                             <span
-                                className={"userDataTableCell userDataTableCellLeft"}>Дата последнего обновления </span>
+                                className={"dataTableCell dataTableCellLeft"}>Дата последнего обновления </span>
                         <span
-                            className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.last_update_timestamp)}</span>
+                            className={"dataTableCell dataTableCellRight"}>{timestampToString(this.state.user.last_update_timestamp)}</span>
                     </div>
-                    <div className={"userDataTableRow"}>
+                    <div className={"dataTableRow"}>
                             <span
-                                className={"userDataTableCell userDataTableCellLeft"}>Дата следующего обновления </span>
+                                className={"dataTableCell dataTableCellLeft"}>Дата следующего обновления </span>
                         <span
-                            className={"userDataTableCell userDataTableCellRight"}>{timestampToString(this.state.user.next_update_timestamp)}</span>
+                            className={"dataTableCell dataTableCellRight"}>{timestampToString(this.state.user.next_update_timestamp)}</span>
                     </div>
                 </Block>
             </div>

@@ -1,0 +1,48 @@
+.Loading {
+    width: 100%;
+    text-align: center;
+}
+
+.avatar {
+    height: 200px;
+}
+
+.usernameLink {
+    font-size: 22px;
+}
+
+.dataTable {
+    margin: 10px 0;
+}
+
+.dataTableRow {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    padding-bottom: 6px;
+}
+
+.dataTableRow:hover {
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 5px;
+}
+
+.dataTableCell img {
+    height: 30px;
+}
+
+.sidebar * {
+    color: #fff !important;
+}
+
+.userLink {
+    flex: 1;
+}
+
+.showOnPikabuImg {
+    padding-left: 15px;
+}

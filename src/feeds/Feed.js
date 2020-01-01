@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import List from "@material-ui/core/List";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Row from "./Row";
-import SearchParams from "./SearchParams";
+import Row from "../Row";
+import SearchParams from "../SearchParams";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from 'axios';
-import DoRequest from "./api";
+import DoRequest from "../api";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Button from "@material-ui/core/Button";
 
@@ -28,7 +28,7 @@ class Feed extends Component {
             items: [],
             hasMoreItems: true,
             searchParamsState: {
-                orderByField: "rating",
+                orderByField: this.props.orderByField,
             },
         };
         this.offset = 0;
@@ -96,12 +96,8 @@ class Feed extends Component {
             filter: filter,
         }, this.requestCancelToken.token).then(response => {
             this.offset += this.limit;
-            if (typeof response === "undefined") {
-                console.log("some shit happened");
-                return;
-            }
             response = response.data;
-            if (response.results != null) {
+            if (response.results.length > 0) {
                 this.setState(prevState => {
                     return {
                         items: prevState.items.concat(response.results),
@@ -128,6 +124,7 @@ class Feed extends Component {
 
     render() {
         const searchParams = <SearchParams
+            orderByField={this.props.orderByField}
             orderByFields={this.props.orderByFields}
             filterByFields={this.props.filterByFields}
             onStateChanged={this.searchParamsStateChanged.bind(this)}

@@ -17,7 +17,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import {BrowserRouter, Link, Route} from "react-router-dom";
 import Home from "./Home";
-import Users from "./Users";
+import Users from "./feeds/Users";
 import User from "./User";
 import {Provider as AlertProvider} from 'react-alert'
 import AlertTemplate from 'react-alert-template-basic'
@@ -27,10 +27,11 @@ import Favicon from './assets/img/favicon.ico';
 import Icon from "@material-ui/core/Icon";
 import About from "./About";
 import Donate from "./Donate";
-import Communities from "./Communities";
+import Communities from "./feeds/Communities";
 import Community from "./Community";
 import BoringGraphs from "./BoringGraphs";
-import Stories from "./Stories";
+import Stories from "./feeds/Stories";
+import Story from "./Story";
 
 const drawerWidth = 240;
 
@@ -236,6 +237,7 @@ class App extends React.Component {
                             <Route path={"/communities"} component={Communities}/>
                             <Route path={"/community/:id"} component={Community}/>
                             <Route path={"/stories"} component={Stories}/>
+                            <Route path={"/story/:id"} component={Story}/>
                             <Route path={"/about"} component={About}/>
                             <Route path={"/donate"} component={Donate}/>
                             <Route path={"/boring"} component={BoringGraphs}/>

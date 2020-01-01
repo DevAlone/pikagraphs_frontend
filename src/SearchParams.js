@@ -16,10 +16,28 @@ class SearchParams extends Component {
     constructor(props) {
         super(props);
 
+        let orderByField = Object.keys(this.props.orderByFields)[0];
+        let reversedOrder = true;
+
+        if (typeof this.props.orderByField !== "undefined") {
+            orderByField = this.props.orderByField;
+            if (orderByField[0] === '-') {
+                orderByField = orderByField.substring(1);
+                reversedOrder = true;
+            } else {
+                reversedOrder = false;
+            }
+        }
+
+        console.log("-----");
+        console.log(this.props.orderByField);
+        console.log(orderByField);
+        console.log("-----");
+
         this.state = {
-            orderByField: Object.keys(this.props.orderByFields)[0],
-            orderByFieldText: this.props.orderByFields[Object.keys(this.props.orderByFields)[0]],
-            reversedOrder: true,
+            orderByField: orderByField,
+            orderByFieldText: this.props.orderByFields[orderByField],
+            reversedOrder: reversedOrder,
             filterFields: [],
             searchText: '',
         };

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
-import "./User.css";
+import "./dataTable.css";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/es/ExpansionPanelDetails/ExpansionPanelDetails";
@@ -44,9 +44,9 @@ class ItemDataTable extends Component {
                                 className={classes.dataTableSummary}
                                 title={"Тыкни, чтоб показать историю"}
                             >
-                                <div key={row[0]} className={"userDataTableRow"}>
-                                    <span className={"userDataTableCell userDataTableCellLeft"}>{row[0] + " "}</span>
-                                    <span className={"userDataTableCell userDataTableCellRight"}>{
+                                <div key={row[0]} className={"dataTableRow"}>
+                                    <span className={"dataTableCell dataTableCellLeft"}>{row[0] + " "}</span>
+                                    <span className={"dataTableCell dataTableCellRight"}>{
                                         Array.isArray(row[1]) ?
                                             row[1].length === 0 ?
                                                 "ничего нет" : row[1].toString() :
