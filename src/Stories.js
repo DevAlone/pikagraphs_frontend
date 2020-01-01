@@ -42,7 +42,7 @@ class Stories extends Component {
         super(props);
         this.orderByFields = {
             "rating": ["Рейтингу", "Рейтинг"],
-            // TODO: "title": ["Заголовку", null],?
+            "title": ["Заголовку", null],
             // TODO: "story_url": ["", null],?
             "number_of_comments": ["Количеству комментариев", "Комментариев"],
             "number_of_pluses": ["Количеству плюсов", "Плюсов"],
@@ -70,7 +70,6 @@ class Stories extends Component {
             // TODO: "story_url"?
             // TODO: "tags"?
             "number_of_comments": ["Количеству комментариев", [">=", "<=", "==", "!="], "number"],
-            "is_deleted": ["Удалён", ["=="], "boolean"],
             "is_rating_hidden": ["Рейтинг скрыт", ["=="], "boolean"],
             "has_mine_tag": ["Есть тег \"моё\"", ["=="], "boolean"],
             "has_adult_tag": ["Есть тег \"NSFW\"", ["=="], "boolean"],
@@ -83,7 +82,8 @@ class Stories extends Component {
             "added_timestamp": ["Дате добавления в pikastat", [">=", "<=", "==", "!="], "number"],
             "last_update_timestamp": ["Дате последнего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
             "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
-            "is_permanently_banned": ["Полностью удалён", ["=="], "boolean"],
+            "is_deleted": ["Удалён", ["=="], "boolean"],
+            "is_permanently_deleted": ["Полностью удалён", ["=="], "boolean"],
         };
     }
 
