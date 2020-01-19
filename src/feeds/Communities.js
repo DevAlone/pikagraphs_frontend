@@ -3,7 +3,6 @@ import BeautifulListItem from "../NiceListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Row from "../Row";
-import "./Communities.css";
 import NiceLink from "../NiceLink";
 import timestampToString from "../date_utils";
 import Feed from "./Feed";
@@ -11,6 +10,12 @@ import Feed from "./Feed";
 const styles = () => ({
     avatar: {
         height: "40px",
+    },
+    communityLink: {
+        flex: 1,
+    },
+    showOnPikabuImg: {
+        paddingLeft: 15,
     },
 });
 
@@ -45,40 +50,39 @@ class Communities extends Component {
     renderItem(item, parent) {
         const {classes} = this.props;
 
-        return (
-            <Row>
-                <div className={"communityLink"}>
-                    <BeautifulListItem
-                        href={"/community/" + item.link_name}
-                    >
-                        <img className={classes.avatar} src={item.avatar_url} alt={"avatar"}/>
-                        <ListItemText primary={item.name}/>
-                        {parent.state.searchParamsState.orderByFieldText[1] != null ?
-                            <Row>
-                                <ListItemText
-                                    title={parent.state.searchParamsState.orderByFieldText[1]}
-                                >{
-                                    parent.state.searchParamsState.orderByField === "added_timestamp" ||
-                                    parent.state.searchParamsState.orderByField === "last_update_timestamp" ?
-                                        timestampToString(item[parent.state.searchParamsState.orderByField]) :
-                                        item[parent.state.searchParamsState.orderByField]
-                                }</ListItemText>
-                            </Row>
-                            : null
-                        }
-                    </BeautifulListItem>
-                </div>
-                <NiceLink
-                    href={item.url}
-                    title={"Показать на Пикабу"}>
-                    <img
-                        src={"https://s.pikabu.ru/favicon.ico"}
-                        alt={"Открыть на Пикабу"}
-                        className={"showOnPikabuImg"}
-                    />
-                </NiceLink>
-            </Row>
-        );
+        return [
+            (<div className={classes.communityLink}>
+                <BeautifulListItem
+                    href={"/community/" + item.link_name}
+                >
+                    <img className={classes.avatar} src={item.avatar_url} alt={"avatar"}/>
+                    <ListItemText primary={item.name}/>
+                    {parent.state.searchParamsState.orderByFieldText[1] != null ?
+                        <Row>
+                            <ListItemText
+                                title={parent.state.searchParamsState.orderByFieldText[1]}
+                            >{
+                                parent.state.searchParamsState.orderByField === "added_timestamp" ||
+                                parent.state.searchParamsState.orderByField === "last_update_timestamp" ?
+                                    timestampToString(item[parent.state.searchParamsState.orderByField]) :
+                                    item[parent.state.searchParamsState.orderByField]
+                            }</ListItemText>
+
+                        </Row>
+                        : null
+                    }
+                </BeautifulListItem>
+            </div>),
+            (<NiceLink
+                href={item.url}
+                title={"Показать на Пикабу"}>
+                <img
+                    src={"https://s.pikabu.ru/favicon.ico"}
+                    alt={"Открыть на Пикабу"}
+                    className={classes.showOnPikabuImg}
+                />
+            </NiceLink>),
+        ];
     }
 }
 

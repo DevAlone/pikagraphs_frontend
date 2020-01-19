@@ -7,6 +7,9 @@ import Feed from "./Feed";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
+import StoryContentBlocks from "../StoryContentBlocks";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const styles = theme => ({
     container: {
@@ -35,12 +38,26 @@ const styles = theme => ({
             paddingLeft: 0,
         },
     },
+    storyContentPreview: {
+        marginBottom: 25,
+    },
+    storiesSeparator: {
+        height: 2,
+        width: "100%",
+        background: "#ccc",
+    },
+    showOnPikabuImg: {
+        paddingLeft: 10,
+        paddingRight: 10,
+    }
 });
 
 class Stories extends Component {
     constructor(props) {
         super(props);
+        this.state = {showPreviews: true};
         this.orderByFields = {
+            "": ["Не сортировать", null],
             "rating": ["Рейтингу", "Рейтинг"],
             "title": ["Заголовку", null],
             // TODO: "story_url": ["", null],?
@@ -59,8 +76,8 @@ class Stories extends Component {
         };
         this.filterByFields = {
             "pikabu_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
-            "author_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
-            "community_id": ["ID на Пикабу", [">=", "<=", "==", "!="], "number"],
+            "author_id": ["ID автора", [">=", "<=", "==", "!="], "number"],
+            "community_id": ["ID сообщества", [">=", "<=", "==", "!="], "number"],
 
             "rating": ["Рейтингу", [">=", "<=", "==", "!="], "number"],
             "number_of_pluses": ["Количеству плюсов", [">=", "<=", "==", "!="], "number"],
@@ -84,6 +101,7 @@ class Stories extends Component {
             "next_update_timestamp": ["Дате следующего обновления(timestamp)", [">=", "<=", "==", "!="], "number"],
             "is_deleted": ["Удалён", ["=="], "boolean"],
             "is_permanently_deleted": ["Полностью удалён", ["=="], "boolean"],
+            "is_hidden_in_api": ["Скрыт в мобильном приложении", ["=="], "boolean"],
         };
     }
 
@@ -94,13 +112,27 @@ class Stories extends Component {
             orderByFields={this.orderByFields}
             filterByFields={this.filterByFields}
             itemRenderer={(item, parent) => this.renderItem(item, parent)}
+            customFeedControls={
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={this.state.showPreviews}
+                            onChange={e => {
+                                this.setState({showPreviews: e.target.checked});
+                            }}
+                        />
+                    }
+                    label="Показывать превьюшки"
+                />
+            }
         />;
     }
 
     renderItem(item, parent) {
         const {classes} = this.props;
 
-        return (
+        return [
+            <div className={classes.storiesSeparator}/>,
             <div className={classes.container}>
                 <Grid
                     container
@@ -110,7 +142,8 @@ class Stories extends Component {
                     alignItems="center"
                 >
                     <Grid item xs className={classes.headerLink}>
-                        <BeautifulListItem href={"/story/pikabu_id==" + item.pikabu_id}>
+                        <BeautifulListItem href={"/story/pikabu_id==" + item.pikabu_id}
+                                           title={"Открыть страницу поста"}>
                             <ListItemText className={classes.title} primary={item.title}/>
 
                             <Grid
@@ -158,14 +191,20 @@ class Stories extends Component {
                             target="_blank"
                             title={"Показать на Пикабу"}>
                             <img
-                                className="showOnPikabuImg"
+                                className={classes.showOnPikabuImg}
                                 src={"https://s.pikabu.ru/favicon.ico"}
                                 alt={"Показать на Пикабу"}/>
                         </NiceLink>
                     </Grid>
                 </Grid>
-            </div>
-        );
+                {this.state.showPreviews ?
+                    <div className={classes.storyContentPreview}>
+                        <StoryContentBlocks
+                            data={item.content_blocks}
+                            isPreview={true}/>
+                    </div> : null}
+            </div>,
+        ];
     }
 }
 

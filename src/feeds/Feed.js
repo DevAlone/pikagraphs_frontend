@@ -8,6 +8,7 @@ import axios from 'axios';
 import DoRequest from "../api";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Button from "@material-ui/core/Button";
+import {filtersToString} from "../helpers";
 
 const styles = theme => ({
     avatar: {
@@ -17,6 +18,8 @@ const styles = theme => ({
         userSelect: "text",
     }
 });
+
+// TODO: return back url params
 
 class Feed extends Component {
     constructor(props) {
@@ -56,15 +59,7 @@ class Feed extends Component {
     };
 
     createFilters() {
-        console.log(this.state.searchParamsState);
-        const filtersString = this.state.searchParamsState.filterFields.filter(filter => {
-            return filter[2].length > 0;
-        }).map(filter => {
-            return filter.join(" ");
-        }).join(" && ");
-        console.log("filters string is '" + filtersString + "'");
-        console.log(filtersString);
-        return filtersString
+        return filtersToString(this.state.searchParamsState.filterFields);
     }
 
     fetchMore(page) {
@@ -85,16 +80,27 @@ class Feed extends Component {
         }
         this.requestCancelToken = axios.CancelToken.source();
 
+        let order_by_fields = null;
+        if (this.state.searchParamsState !== null && this.state.searchParamsState.orderByField.length > 0) {
+            if (this.state.searchParamsState.reversedOrder) {
+                order_by_fields = '-';
+            } else {
+                order_by_fields = '';
+            }
+            order_by_fields += this.state.searchParamsState.orderByField;
+        }
+
         DoRequest('list_model', {
             name: this.props.modelName,
             limit: this.limit,
             offset: this.offset,
-            order_by_fields: this.state.searchParamsState != null ?
-                (this.state.searchParamsState.reversedOrder ?
-                    '-' : '') + this.state.searchParamsState.orderByField
-                : null,
+            order_by_fields: order_by_fields,
             filter: filter,
         }, this.requestCancelToken.token).then(response => {
+            if (typeof response === "undefined") {
+                console.log("response is undefined again, for some reason...");
+                return;
+            }
             this.offset += this.limit;
             response = response.data;
             if (response.results.length > 0) {
@@ -139,6 +145,8 @@ class Feed extends Component {
                     onCopy={console.log("copied succesfully")}>
                     <Button>Скопировать в буфер обмена</Button>
                 </CopyToClipboard>
+
+                {this.props.customFeedControls}
 
                 <InfiniteScroll
                     dataLength={this.state.items.length}

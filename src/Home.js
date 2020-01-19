@@ -9,6 +9,9 @@ class Home extends Component {
 
         this.state = {
             'numberOfUsers': 'loading...',  // TODO: complete
+            'numberOfStories': 'loading...',
+            'numberOfComments': 'loading...',
+            'numberOfCommunities': 'loading...',
         }
     }
 
@@ -17,13 +20,21 @@ class Home extends Component {
             <div>
                 <h1>Pikastat - статистика Пикабу</h1>
                 <Block>
-                    Pikastat(первое название Pikagraphs) - проект по сбору статистики сайта<span> </span>
+                    Pikastat - проект по сбору статистики сайта<span> </span>
                     <NiceLink href="https://pikabu.ru">Пикабу</NiceLink>,
                     запущенный 19 августа 2017 года.
-                    За время существования был несколько раз переписан на различных технологиях для достижения большей
-                    производительности.
-                    Сейчас в базе {this.state.numberOfUsers} пользователей, которые обновляются с различной
+                    <br/>
+                    Сейчас в базе<span> </span>
+                    {this.state.numberOfUsers} пользователей,<span> </span>
+                    {this.state.numberOfStories} постов,<span> </span>
+                    {this.state.numberOfComments} комментариев и<span> </span>
+                    {this.state.numberOfCommunities} сообществ,<span> </span>
+                    которые обновляются с различной
                     периодичностью.
+                    <br/>
+                    <br/>
+                    Страница проекта в телеграме -><span> </span>
+                    <NiceLink href={"https://t.me/pikastat"}>https://t.me/pikastat</NiceLink>
                 </Block>
 
                 <h2>Распределение пользователей по дате регистрации</h2>

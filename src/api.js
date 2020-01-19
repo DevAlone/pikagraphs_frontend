@@ -11,9 +11,13 @@ class API {
                 console.log("ERROR: ", error)
 
                 if (typeof error.response !== "undefined") {
-                    alert(error.response.data.error_message);
+                    if (typeof error.response.data.error_message !== "undefined") {
+                        alert(error.response.data.error_message);
+                    } else {
+                        alert(error.response.data);
+                    }
                 } else {
-                    alert("some error happened");
+                    console.log("error.response is undefined");
                 }
             }
         );

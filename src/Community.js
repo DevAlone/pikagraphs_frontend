@@ -12,6 +12,8 @@ import ItemDataTable from "./ItemDataTable";
 
 const styles = theme => ({});
 
+// TODO: render html
+
 class Community extends Component {
     constructor(props) {
         super(props);

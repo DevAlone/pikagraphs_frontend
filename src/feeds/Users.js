@@ -21,6 +21,7 @@ class Users extends Component {
     constructor(props) {
         super(props);
         this.orderByFields = {
+            "": ["Не сортировать", null],
             "rating": ["Рейтингу", "Рейтинг"],
             "number_of_subscribers": ["Количеству подписчиков", "Подписчиков"],
             "number_of_comments": ["Количеству комментариев", "Комментариев"],

@@ -14,7 +14,7 @@ class NiceListItem extends Component {
 
     render() {
         return (
-            <Link to={this.props.href} className={"NiceListItem"} draggable={false}>
+            <Link to={this.props.href} className={"NiceListItem"} draggable={false} title={this.props.title}>
                 <ListItemLink>
                     {this.props.children}
                 </ListItemLink>

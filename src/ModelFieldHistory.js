@@ -97,6 +97,12 @@ class ModelImageFieldHistory extends AbstractModelFieldHistory {
 class ModelTextFieldHistory extends AbstractModelFieldHistory {
 }
 
+class ModelCustomElementFieldHistory extends AbstractModelFieldHistory {
+    renderItem(item) {
+        return this.props.renderer(item.value);
+    }
+}
+
 const styles = theme => ({});
 
 class ModelFieldHistory extends Component {
@@ -109,23 +115,33 @@ class ModelFieldHistory extends Component {
     }
 
     render() {
-        return (
-            this.fieldType === "number" ?
-                <Graph
+        if (typeof this.fieldType === "function") {
+            return <ModelCustomElementFieldHistory
+                modelName={this.modelName + "_" + this.fieldName + "_versions"}
+                itemId={this.itemId}
+                renderer={this.props.fieldType}
+            />;
+        }
+
+        switch (this.fieldType) {
+            case "number":
+                return <Graph
+                    modelName={this.modelName + "_" + this.fieldName + "_versions"}
+                    itemId={this.itemId}
+                />;
+                break;
+            case "image":
+                return <ModelImageFieldHistory
                     modelName={this.modelName + "_" + this.fieldName + "_versions"}
                     itemId={this.itemId}
                 />
-                : this.fieldType === "image" ?
-                <ModelImageFieldHistory
+                break;
+            default:
+                return <ModelTextFieldHistory
                     modelName={this.modelName + "_" + this.fieldName + "_versions"}
                     itemId={this.itemId}
-                />
-                :
-                <ModelTextFieldHistory
-                    modelName={this.modelName + "_" + this.fieldName + "_versions"}
-                    itemId={this.itemId}
-                />
-        );
+                />;
+        }
     }
 }
 

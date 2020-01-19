@@ -22,12 +22,16 @@ class FilterField extends Component {
         this.humanReadableName = this.props.fieldHumanReadableName;
         this.type = this.props.fieldType;
         this.state = {
-            selectedFunction: this.props.fieldConfig[0],
-            value: this.type === "boolean" ?
-                "false" :
-                this.type === "number" ?
-                    "0" :
-                    "",
+            selectedFunction: typeof this.props.selectedFunction !== "undefined" ?
+                this.props.selectedFunction :
+                this.props.fieldConfig[0],
+            value: typeof this.props.value !== "undefined" && this.props.value.length > 0 ?
+                this.props.value :
+                this.type === "boolean" ?
+                    "false" :
+                    this.type === "number" ?
+                        "0" :
+                        "",
         };
         this.updateTimeout = 0;
         this.onChange();
