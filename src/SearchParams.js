@@ -49,12 +49,16 @@ class SearchParams extends Component {
 
         const getParams = queryString.parse(window.location.search, {parseNumbers: true, parseBooleans: true});
 
+        const hasParams = Object.keys(getParams).length > 0;
+
         const searchText = "search_text" in getParams ? getParams["search_text"] : '';
         if ("sort_by" in getParams && this.props.orderByFields.hasOwnProperty(getParams["sort_by"])) {
             orderByField = getParams["sort_by"];
         }
         if ("reverse_sort" in getParams) {
             reversedOrder = getParams["reverse_sort"];
+        } else if (hasParams) {
+            reversedOrder = false;
         }
 
         const filterFields = "filter" in getParams ?
@@ -89,6 +93,7 @@ class SearchParams extends Component {
     }
 
     createFilter = (fieldName, operator, value) => {
+        console.log(`createFilter(${fieldName}, ${operator}, ${value})`);
         this.setState(prevState => {
             let fields = prevState.filterFields;
             fields.push([fieldName, operator, value]);
@@ -102,6 +107,7 @@ class SearchParams extends Component {
     };
 
     handleChangeFilter = (index, fieldName, functionName, value) => {
+        console.log(`handleChangeFilter(${index}, ${fieldName}, ${functionName}, ${value})`);
         this.setState(prevState => {
             var fields = prevState.filterFields;
             fields[index] = [fieldName, functionName, value];
@@ -116,6 +122,7 @@ class SearchParams extends Component {
     };
 
     handleDeleteFilter = (index) => {
+        console.log("handleDeleteFilter()");
         this.setState(prevState => {
             return {
                 filterFields: prevState.filterFields.filter((_, i) => i !== index),
@@ -146,6 +153,8 @@ class SearchParams extends Component {
     };
 
     updateURL = () => {
+        console.log("updateURL()");
+        console.log("this.state", this.state);
         const getParams = new URLSearchParams();
 
         if (this.state.searchText.length > 0) {
@@ -154,7 +163,7 @@ class SearchParams extends Component {
         if (this.state.orderByField.length > 0) {
             getParams.set("sort_by", this.state.orderByField);
             if (this.state.reversedOrder) {
-                getParams.set("reverse_order", true);
+                getParams.set("reverse_sort", true);
             }
         }
         const filtersString = filtersStringToURLCompatible(filtersToString(this.state.filterFields));
@@ -287,9 +296,11 @@ class SearchParams extends Component {
                     const fieldHumanReadableName = this.props.filterByFields[fieldName][0];
 
                     return (
-                        <div className={classes.filterField}>
+                        <div
+                            key={value[0]}
+                            className={classes.filterField}
+                        >
                             <FilterField
-                                key={value[0]}
                                 selectedFunction={value[1]}
                                 value={value[2]}
                                 fieldName={fieldName}

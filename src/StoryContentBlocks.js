@@ -68,7 +68,6 @@ class StoryContentBlocks extends Component {
 
         if (isPreview) {
             return <div className={classes.previewWrapper}>
-                {/*{this.renderItems(this.props.data.slice(0, 1))}*/}
                 {this.renderItems(this.props.data)}
                 <div className={classes.readMore}>
                     <div className={classes.readMoreButton}>
@@ -88,11 +87,13 @@ class StoryContentBlocks extends Component {
 
     renderItems(items) {
         const {classes} = this.props;
-        return [items.map(block => {
-            return (<div className={classes.storyContentBlockWrapper}>
-                <StoryContentBlock type={block.type} data={block.data} isPreview={this.props.isPreview}/>
-            </div>);
-        })];
+        return items.map((block, i) => {
+            return (
+                <div key={i} className={classes.storyContentBlockWrapper}>
+                    <StoryContentBlock key={i} type={block.type} data={block.data} isPreview={this.props.isPreview}/>
+                </div>
+            );
+        });
     }
 }
 

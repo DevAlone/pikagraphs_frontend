@@ -132,12 +132,12 @@ class Stories extends Component {
         const {classes} = this.props;
 
         return [
-            <div className={classes.storiesSeparator}/>,
-            <div className={classes.container}>
+            <div key={item.pikabu_id + "_separator"} className={classes.storiesSeparator}/>,
+            <div key={item.pikabu_id} className={classes.container}>
                 <Grid
                     container
                     wrap={"nowrap"}
-                    spacing={2}
+                    spacing={8}
                     className={classes.header}
                     alignItems="center"
                 >

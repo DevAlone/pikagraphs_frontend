@@ -112,6 +112,7 @@ class FilterField extends Component {
                         this.type === "boolean" ?
                             <Checkbox
                                 onChange={this.handleCheckboxChange}
+                                checked={this.state.value === "true"}
                                 value={this.state.value}
                             /> :
                             <TextField
