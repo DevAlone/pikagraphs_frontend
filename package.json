@@ -28,7 +28,7 @@
     "react-sanitized-html": "^2.0.0",
     "react-scripts": "2.1.2",
     "recharts": "^1.4.2",
-    "sanitize-html": "^1.21.1",
+    "sanitize-html": "^2.3.2",
     "typeface-roboto": "0.0.54",
     "url-parse": "^1.4.4",
     "webpack": "4.19.1"
